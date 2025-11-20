@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="pt-pt" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard N1 - Tempo Médio de Atendimento</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* --- Design System --- */
+        :root {
+            /* Cores Base (Light Mode) */
+            --color-bg: #f4f4f4;
+            --color-card-bg: #ffffff;
+            --color-text: #24282A;
+            --color-text-muted: #6c757d;
+            --color-header: #231372;
+            --color-accent: #20E2C8;
+            --color-sidebar: #ffffff;
+            --color-border: #e0e0e0;
+            --color-table-header: rgba(35, 19, 114, 0.05);
+            
+            /* Gráficos */
+            --color-graphic-1: #231372;
+            --color-graphic-2: #20E2C8;
+            --color-graphic-3: #6106AF;
+            
+            /* Tipografia */
+            --font-text: 'Figtree', sans-serif;
+            --font-header: 'Barlow', sans-serif;
+            
+            /* Layout */
+            --sidebar-width: 260px;
+            --header-height: 80px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Variáveis para Dark Mode */
+        [data-theme="dark"] {
+            --color-bg: #121418;
+            --color-card-bg: #1e2228;
+            --color-text: #ecf0f1;
+            --color-text-muted: #aab0c6;
+            --color-header: #ffffff;
+            --color-sidebar: #1e2228;
+            --color-border: #2c3036;
+            --color-table-header: rgba(255,255,255,0.05);
+        }
+
+        /* --- Reset & Base --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--color-bg);
+            font-family: var(--font-text);
+            color: var(--color-text);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--color-sidebar);
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--color-border);
+            height: var(--header-height);
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 15px;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--color-text-muted);
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: rgba(32, 226, 200, 0.15); /* Accent com transparência */
+            color: var(--color-header); 
+        }
+        
+        [data-theme="dark"] .sidebar-menu a:hover, 
+        [data-theme="dark"] .sidebar-menu a.active {
+             color: var(--color-accent);
+        }
+
+        .sidebar-menu i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Toggle Dark Mode */
+        .theme-toggle-container {
+            padding: 20px;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 30px;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        /* --- Header da Página --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-header);
+            color: var(--color-header);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        [data-theme="dark"] h1, [data-theme="dark"] h2 {
+            color: var(--color-accent);
+        }
+
+        h1 { font-size: 2rem; letter-spacing: -0.5px; }
+        h2 { font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--color-text); opacity: 0.9; }
+
+        /* --- Cards --- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: var(--color-card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            border: 1px solid var(--color-border);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .card-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--color-header);
+            font-family: var(--font-header);
+            margin-bottom: 5px;
+        }
+        
+        [data-theme="dark"] .card-value { color: #fff; }
+
+        .card-trend { font-size: 0.85rem; font-weight: 600; }
+        .trend-bad { color: #e74c3c; } /* Vermelho para tempos altos */
+        .trend-good { color: #20E2C8; } /* Verde/Cyan para tempos baixos */
+
+        /* --- Gráficos --- */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Gráfico de linha maior que o de barra */
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1200px) {
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+
+        .chart-container {
+            background-color: var(--color-card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            border: 1px solid var(--color-border);
+            height: 450px;
+            position: relative;
+        }
+
+        /* --- Tabela --- */
+        .table-container {
+            background-color: var(--color-card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            border: 1px solid var(--color-border);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            background-color: var(--color-table-header);
+            color: var(--color-header);
+            font-family: var(--font-header);
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--color-accent);
+        }
+        
+        [data-theme="dark"] th { color: var(--color-accent); }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+
+        tr:last-child td { border-bottom: none; }
+        
+        tr:hover td {
+            background-color: rgba(0,0,0,0.02);
+        }
+        [data-theme="dark"] tr:hover td { background-color: rgba(255,255,255,0.02); }
+
+        /* Badge para média */
+        .badge-avg {
+            background-color: rgba(32, 226, 200, 0.2);
+            color: var(--color-header);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+        [data-theme="dark"] .badge-avg { color: var(--color-accent); }
+
+        /* Switch Toggle Customizado */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--color-accent); }
+        input:checked + .slider:before { transform: translateX(24px); }
+        
+        .btn {
+            background-color: var(--color-accent);
+            color: #231372;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: filter 0.2s;
+        }
+        .btn:hover { filter: brightness(1.1); }
+
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <svg viewBox="0 0 837.7 245.66" style="height: 45px; width: auto;">
+                <path fill="var(--color-header)" d="M452.05,129.69v18.74c0,1.99-1.61,3.6-3.6,3.6h-67.98c-1.99,0-3.6-1.61-3.6-3.6h0V42.63c0-1.99,1.61-3.6,3.6-3.6h20.9c1.99,0,3.6,1.61,3.6,3.6h0v83.46h43.47c1.99,0,3.6,1.61,3.61,3.59h0Z"/>
+                <path fill="var(--color-header)" d="M370.4,140.66c.53.99.24,2.22-.67,2.87-26.46,18.91-63.23,12.79-82.14-13.66-18.91-26.46-12.79-63.23,13.66-82.14,20.48-14.64,47.99-14.64,68.47,0,.91.66,1.19,1.88.67,2.88l-10.45,19.73c-.93,1.76-3.11,2.42-4.87,1.49-.2-.1-.38-.23-.55-.36-13.36-10.51-32.71-8.21-43.22,5.15-10.51,13.36-8.21,32.71,5.15,43.22,11.17,8.79,26.91,8.79,38.08,0,1.55-1.24,3.82-.99,5.06.57.14.17.26.36.37.56l10.44,19.73Z"/>
+                <rect x="560" y="40" width="100" height="100" fill="var(--color-accent)" rx="10" style="opacity:0.8"/>
+            </svg>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active"><i class="fas fa-chart-pie"></i> Dashboard N1</a></li>
+            <li><a href="#"><i class="fas fa-list"></i> Detalhes de Chamados</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li>
+        </ul>
+
+        <div class="theme-toggle-container">
+            <i class="fas fa-sun" style="margin-right:10px; color:var(--color-text-muted);"></i>
+            <label class="switch">
+                <input type="checkbox" id="theme-switch">
+                <span class="slider"></span>
+            </label>
+            <i class="fas fa-moon" style="margin-left:10px; color:var(--color-text-muted);"></i>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header>
+            <div>
+                <h1>Análise de <span style="color: var(--color-accent);">Performance N1</span></h1>
+                <p style="color: var(--color-text-muted);">Tempo Médio de Atendimento por Categoria Fechada (2024 - 2025)</p>
+            </div>
+            <div>
+                <button class="btn"><i class="fas fa-file-export"></i> Exportar PDF</button>
+            </div>
+        </header>
+
+        <section class="cards-grid">
+            <div class="card">
+                <div class="card-title">Média Global N1</div>
+                <div class="card-value" id="kpi-global">--</div>
+                <div class="card-trend">Horas Totais</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Maior Tempo Médio</div>
+                <div class="card-value trend-bad" id="kpi-slowest-val">--</div>
+                <div class="card-trend" id="kpi-slowest-name">Categoria</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Menor Tempo Médio</div>
+                <div class="card-value trend-good" id="kpi-fastest-val">--</div>
+                <div class="card-trend" id="kpi-fastest-name">Categoria</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Categorias Analisadas</div>
+                <div class="card-value" id="kpi-count">--</div>
+                <div class="card-trend">Ativas</div>
+            </div>
+        </section>
+
+        <section class="charts-grid">
+            <div class="chart-container">
+                <h2>Evolução (Top 5 Mais Lentas)</h2>
+                <canvas id="trendChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Ranking N1 (Global)</h2>
+                <canvas id="barChart"></canvas>
+            </div>
+        </section>
+
+        <section class="table-container">
+            <h2>Detalhamento Trimestral</h2>
+            <div style="overflow-x:auto; margin-top: 15px;">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Área</th>
+                            <th>Média N1</th>
+                            <th>Q1 '24</th>
+                            <th>Q2 '24</th>
+                            <th>Q3 '24</th>
+                            <th>Q4 '24</th>
+                            <th>Q1 '25</th>
+                            <th>Q2 '25</th>
+                            <th>Q3 '25</th>
+                            <th>Q4 '25</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // --- DADOS PROCESSADOS (JSON) ---
+        // Estes dados foram extraídos do teu ficheiro CSV N1 - SLO
+        const detailsData = [{"Category": "Access", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.01, "Q1_2025": 0.0, "Q2_2025": 16.654015748031494, "Q3_2025": 12.665436046511628, "Q4_2025": 17.71333333333333, "Average_N1": 15.680928375958819, "Area": "Infra"}, {"Category": "Acessories / Notebook", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 342.59, "Q2_2025": 21.778679245283019, "Q3_2025": 68.81973684210527, "Q4_2025": 10.5775, "Average_N1": 110.94147902184706, "Area": "Infra"}, {"Category": "Advertising", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.1239473684210526, "Q3_2025": 1.7875675675675676, "Q4_2025": 0.0, "Average_N1": 0.9705049808045977, "Area": "Service"}, {"Category": "CleverAds", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.52, "Q3_2025": 0.5067647058823529, "Q4_2025": 0.0, "Average_N1": 0.34225490196078435, "Area": "Service"}, {"Category": "Traffic", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.96, "Q3_2025": 1.5925, "Q4_2025": 0.0, "Average_N1": 1.1841666666666668, "Area": "Service"}, {"Category": "Implementation", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 2.165, "Q3_2025": 1.6668421052631579, "Q4_2025": 0.0, "Average_N1": 1.277280701754386, "Area": "Service"}, {"Category": "Resolution AUTO", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 66.67, "Q4_2025": 1.8633333333333333, "Average_N1": 22.844444444444445, "Area": "Service"}, {"Category": "Jira /Confluence", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.22727272727272727, "Q3_2025": 0.25, "Q4_2025": 0.0, "Average_N1": 0.1590909090909091, "Area": "Service"}, {"Category": "PowerBI", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 6.113333333333333, "Q3_2025": 66.166875, "Q4_2025": 0.0, "Average_N1": 24.09340277777778, "Area": "Service"}, {"Category": "Network", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.207, "Q3_2025": 1.7966666666666666, "Q4_2025": 0.0, "Average_N1": 1.0012222222222221, "Area": "Infra"}, {"Category": "Printer", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 2.05, "Q4_2025": 0.0, "Average_N1": 0.6833333333333333, "Area": "Infra"}, {"Category": "B2B / Approvals / Commission / Bold", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 5.322222222222222, "Q3_2025": 0.598, "Q4_2025": 0.0, "Average_N1": 1.9734074074074073, "Area": "Core"}, {"Category": "Antivirus", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.17, "Q3_2025": 0.2933333333333333, "Q4_2025": 0.0, "Average_N1": 0.15444444444444444, "Area": "Infra"}, {"Category": "Creatives", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.45, "Q3_2025": 0.0, "Q4_2025": 0.0, "Average_N1": 0.4833333333333333, "Area": "Service"}, {"Category": "C2P", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.6585714285714285, "Q3_2025": 2.657058823529412, "Q4_2025": 0.0, "Average_N1": 1.4385434173669467, "Area": "Core"}, {"Category": "Improvement", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 485.77, "Q4_2025": 193.79, "Average_N1": 339.78, "Area": "Service"}, {"Category": "RPA", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 28.06, "Q3_2025": 78.97, "Q4_2025": 0.0, "Average_N1": 53.515, "Area": "Delivery"}, {"Category": "Biometric Control", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 54.9425, "Q3_2025": 33.965833333333336, "Q4_2025": 31.51, "Average_N1": 40.13944444444445, "Area": "Corporate"}, {"Category": "New Services", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 2.045, "Q3_2025": 2.31, "Q4_2025": 0.0, "Average_N1": 1.4516666666666667, "Area": "Core"}, {"Category": "New Solution Request", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 5.805, "Q3_2025": 5.26, "Q4_2025": 16.91, "Average_N1": 9.325, "Area": "Service"}, {"Category": "Data Base", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 2.17, "Q4_2025": 0.0, "Average_N1": 0.7233333333333334, "Area": "Infra"}, {"Category": "Information Security", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 0.28, "Q4_2025": 0.0, "Average_N1": 0.09333333333333334, "Area": "Infra"}];
+        const summaryData = [{"Category": "All Close Categories", "Q1_2024": 5.004256329113924, "Q2_2024": 10.188636363636364, "Q3_2024": 19.925573997233748, "Q4_2024": 37.872317224287485, "Q1_2025": 18.288285144566302, "Q2_2025": 11.565137880986939, "Q3_2025": 25.434093198992443, "Q4_2025": 19.279545454545453, "Average_N1": 49.185948531120886, "Area": null}, {"Category": "(none)", "Q1_2024": 5.004256329113924, "Q2_2024": 10.188636363636364, "Q3_2024": 19.925573997233748, "Q4_2024": 37.91929280397022, "Q1_2025": 17.964630738522956, "Q2_2025": 11.164735516372795, "Q3_2025": 65.90125, "Q4_2025": 0.17, "Average_N1": 56.079458582950004, "Area": null}];
+        const top5Data = [{"Category": "Improvement", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 485.77, "Q4_2025": 193.79, "Average_N1": 339.78, "Area": "Service"}, {"Category": "Acessories / Notebook", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 342.59, "Q2_2025": 21.778679245283019, "Q3_2025": 68.81973684210527, "Q4_2025": 10.5775, "Average_N1": 110.94147902184706, "Area": "Infra"}, {"Category": "RPA", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 28.06, "Q3_2025": 78.97, "Q4_2025": 0.0, "Average_N1": 53.515, "Area": "Delivery"}, {"Category": "Biometric Control", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 54.9425, "Q3_2025": 33.965833333333336, "Q4_2025": 31.51, "Average_N1": 40.13944444444445, "Area": "Corporate"}, {"Category": "PowerBI", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 6.113333333333333, "Q3_2025": 66.166875, "Q4_2025": 0.0, "Average_N1": 24.09340277777778, "Area": "Service"}];
+
+        // --- LOGICA JS ---
+
+        const themeSwitch = document.getElementById('theme-switch');
+        const body = document.body;
+        let trendChartInstance = null;
+        let barChartInstance = null;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            populateCards();
+            initCharts();
+            initTable();
+        });
+
+        // 1. Alternância de Tema
+        themeSwitch.addEventListener('change', () => {
+            if (themeSwitch.checked) {
+                body.setAttribute('data-theme', 'dark');
+                updateChartsTheme(true);
+            } else {
+                body.setAttribute('data-theme', 'light');
+                updateChartsTheme(false);
+            }
+        });
+
+        // 2. Popular Cards
+        function populateCards() {
+            // Média Global
+            const global = summaryData.find(d => d.Category === 'All Close Categories');
+            if(global) {
+                document.getElementById('kpi-global').innerText = parseFloat(global.Average_N1).toFixed(2) + 'h';
+            }
+
+            // Ordenar para encontrar extremos
+            const sorted = [...detailsData].sort((a, b) => b.Average_N1 - a.Average_N1);
+            const slowest = sorted[0];
+            
+            // Filtrar zeros para encontrar o "mais rápido" que seja válido
+            const validData = sorted.filter(d => d.Average_N1 > 0.01);
+            const fastest = validData[validData.length - 1];
+
+            if(slowest) {
+                document.getElementById('kpi-slowest-val').innerText = parseFloat(slowest.Average_N1).toFixed(1) + 'h';
+                document.getElementById('kpi-slowest-name').innerText = slowest.Category;
+            }
+            if(fastest) {
+                document.getElementById('kpi-fastest-val').innerText = parseFloat(fastest.Average_N1).toFixed(1) + 'h';
+                document.getElementById('kpi-fastest-name').innerText = fastest.Category;
+            }
+            
+            document.getElementById('kpi-count').innerText = detailsData.length;
+        }
+
+        // 3. Inicializar Gráficos
+        function initCharts() {
+            const ctxTrend = document.getElementById('trendChart').getContext('2d');
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+
+            // Chart 1: Tendência (Top 5)
+            const quarters = ['Q1_2024', 'Q2_2024', 'Q3_2024', 'Q4_2024', 'Q1_2025', 'Q2_2025', 'Q3_2025', 'Q4_2025'];
+            const quarterLabels = ['Q1 24', 'Q2 24', 'Q3 24', 'Q4 24', 'Q1 25', 'Q2 25', 'Q3 25', 'Q4 25'];
+            
+            // Cores do Design System para as linhas
+            const lineColors = ['#231372', '#20E2C8', '#6106AF', '#E74C3C', '#F39C12'];
+
+            const datasetsTrend = top5Data.map((item, index) => {
+                return {
+                    label: item.Category,
+                    data: quarters.map(q => item[q]),
+                    borderColor: lineColors[index % lineColors.length],
+                    backgroundColor: lineColors[index % lineColors.length],
+                    tension: 0.3,
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    fill: false
+                };
+            });
+
+            trendChartInstance = new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: quarterLabels,
+                    datasets: datasetsTrend
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Horas' },
+                            grid: { color: '#e0e0e0' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // Chart 2: Barra (Top 10 por espaço)
+            const sortedData = [...detailsData].sort((a, b) => b.Average_N1 - a.Average_N1).slice(0, 10);
+            
+            barChartInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: sortedData.map(d => d.Category),
+                    datasets: [{
+                        label: 'Média N1 (Horas)',
+                        data: sortedData.map(d => d.Average_N1),
+                        backgroundColor: '#20E2C8',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: '#e0e0e0' } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Atualizar cores dos gráficos no Dark Mode
+        function updateChartsTheme(isDark) {
+            const textColor = isDark ? '#ecf0f1' : '#24282A';
+            const gridColor = isDark ? '#2c3036' : '#e0e0e0';
+
+            [trendChartInstance, barChartInstance].forEach(chart => {
+                if(chart) {
+                    chart.options.scales.x.ticks.color = textColor;
+                    chart.options.scales.y.ticks.color = textColor;
+                    
+                    if(chart.options.scales.x.grid) chart.options.scales.x.grid.color = gridColor;
+                    if(chart.options.scales.y.grid) chart.options.scales.y.grid.color = gridColor;
+                    
+                    if(chart.options.plugins.legend) chart.options.plugins.legend.labels.color = textColor;
+                    
+                    chart.update();
+                }
+            });
+        }
+
+        // 4. Popular Tabela
+        function initTable() {
+            const tbody = document.querySelector('#dataTable tbody');
+            let html = '';
+            
+            detailsData.forEach(row => {
+                html += `<tr>
+                    <td style="font-weight:600; color: var(--color-header);">${row.Category}</td>
+                    <td><span style="font-size:0.8em; opacity:0.7;">${row.Area || '-'}</span></td>
+                    <td><span class="badge-avg">${parseFloat(row.Average_N1).toFixed(2)} h</span></td>
+                    <td>${parseFloat(row.Q1_2024).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q2_2024).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q3_2024).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q4_2024).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q1_2025).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q2_2025).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q3_2025).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q4_2025).toFixed(1)}</td>
+                </tr>`;
+            });
+            
+            tbody.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
