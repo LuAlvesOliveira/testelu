@@ -14,29 +14,25 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* --- Design System & Variáveis --- */
+        /* --- Design System --- */
         :root {
-            /* Cores Base (Light Mode) */
             --color-bg: #f4f4f4;
             --color-card-bg: #ffffff;
             --color-text: #24282A;
             --color-text-muted: #6c757d;
-            --color-header: #231372; /* Azul Institucional */
-            --color-accent: #20E2C8; /* Verde/Cyan Institucional */
+            --color-header: #231372;
+            --color-accent: #20E2C8;
             --color-sidebar: #ffffff;
             --color-border: #e0e0e0;
             --color-table-header: rgba(35, 19, 114, 0.05);
             
-            /* Tipografia */
             --font-text: 'Figtree', sans-serif;
             --font-header: 'Barlow', sans-serif;
             
-            /* Layout */
             --sidebar-width: 280px; 
             --transition-speed: 0.3s;
         }
 
-        /* Dark Mode */
         [data-theme="dark"] {
             --color-bg: #121418;
             --color-card-bg: #1e2228;
@@ -48,7 +44,6 @@
             --color-table-header: rgba(255,255,255,0.05);
         }
 
-        /* --- Reset & Base --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
@@ -59,9 +54,10 @@
             transition: background-color var(--transition-speed), color var(--transition-speed);
             display: flex;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* --- Sidebar (Menu Lateral Fixo) --- */
+        /* --- Sidebar --- */
         .sidebar {
             width: var(--sidebar-width);
             background-color: var(--color-sidebar);
@@ -71,39 +67,30 @@
             position: fixed;
             height: 100vh;
             z-index: 100;
-            transition: background-color var(--transition-speed), border-color var(--transition-speed);
         }
 
         .sidebar-header {
             padding: 30px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid var(--color-border);
             background-color: var(--color-sidebar);
+            border-bottom: 1px solid var(--color-border);
         }
         
-        /* SVG Ajustado para caber no menu */
         .sidebar-header svg {
             width: 100%;
             height: auto;
             max-height: 80px;
             display: block;
         }
-
-        /* Correção de cor do SVG no Dark Mode */
-        [data-theme="dark"] .cls-4 { fill: #ffffff !important; transition: fill 0.3s; }
+        
+        [data-theme="dark"] .cls-4 { fill: #ffffff !important; } /* Fix SVG Dark Mode */
 
         .sidebar-menu {
             list-style: none;
             padding: 20px 15px;
             flex-grow: 1;
-            overflow-y: auto;
         }
 
-        .sidebar-menu li {
-            margin-bottom: 8px;
-        }
+        .sidebar-menu li { margin-bottom: 8px; }
 
         .sidebar-menu a {
             display: flex;
@@ -114,7 +101,7 @@
             border-radius: 8px;
             transition: all 0.2s;
             font-weight: 600;
-            font-size: 0.95rem;
+            cursor: pointer;
         }
 
         .sidebar-menu a:hover, .sidebar-menu a.active {
@@ -127,12 +114,8 @@
              color: var(--color-accent);
         }
 
-        .sidebar-menu i {
-            margin-right: 15px;
-            width: 20px;
-            text-align: center;
-        }
-        
+        .sidebar-menu i { margin-right: 15px; width: 20px; text-align: center; }
+
         /* --- Main Content --- */
         .main-content {
             margin-left: var(--sidebar-width);
@@ -141,6 +124,7 @@
             width: calc(100% - var(--sidebar-width));
         }
 
+        /* Header Content */
         header {
             display: flex;
             justify-content: space-between;
@@ -148,25 +132,24 @@
             margin-bottom: 40px;
         }
 
-        h1, h2, h3 {
+        h1, h2 {
             font-family: var(--font-header);
             color: var(--color-header);
             font-weight: 700;
             text-transform: uppercase;
         }
+        [data-theme="dark"] h1, [data-theme="dark"] h2 { color: var(--color-accent); }
         
-        [data-theme="dark"] h1, [data-theme="dark"] h2 {
-            color: var(--color-accent);
-        }
-
-        h1 { 
-            font-size: 2.2rem; 
-            letter-spacing: -0.5px; 
-        }
-
+        h1 { font-size: 2.2rem; letter-spacing: -0.5px; }
         .highlight { color: var(--color-accent); }
 
-        /* --- Cards --- */
+        /* Views (Tab System) */
+        .view-section { display: none; animation: fadeIn 0.4s ease; }
+        .view-section.active { display: block; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cards */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -182,48 +165,24 @@
             border: 1px solid var(--color-border);
             transition: transform 0.2s ease;
         }
-        
         .card:hover { transform: translateY(-3px); }
-
-        .card-title {
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .card-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--color-header);
-            font-family: var(--font-header);
-        }
+        .card-title { font-size: 0.85rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 10px; }
+        .card-value { font-size: 2.2rem; font-weight: 700; color: var(--color-header); font-family: var(--font-header); }
         [data-theme="dark"] .card-value { color: #fff; }
+        .trend-bad { color: #e74c3c !important; } 
+        .trend-good { color: #20E2C8 !important; } 
 
-        .trend-bad { color: #e74c3c; } 
-        .trend-good { color: #20E2C8; } 
-
-        /* --- Charts --- */
+        /* Charts & Tables */
         .chart-container {
             background-color: var(--color-card-bg);
             padding: 25px;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
             border: 1px solid var(--color-border);
-            height: 450px;
+            height: 500px;
             position: relative;
             margin-bottom: 30px;
         }
         
-        .charts-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-        @media (max-width: 1200px) { .charts-row { grid-template-columns: 1fr; } }
-
-        /* --- Table --- */
         .table-container {
             background-color: var(--color-card-bg);
             padding: 25px;
@@ -232,66 +191,21 @@
             overflow-x: auto;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-            white-space: nowrap;
-        }
-
-        th {
-            text-align: left;
-            padding: 15px;
-            background-color: var(--color-table-header);
-            color: var(--color-header);
-            font-family: var(--font-header);
-            font-weight: 700;
-            text-transform: uppercase;
-            border-bottom: 2px solid var(--color-accent);
-        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; white-space: nowrap; }
+        th { text-align: left; padding: 15px; background-color: var(--color-table-header); color: var(--color-header); font-family: var(--font-header); text-transform: uppercase; border-bottom: 2px solid var(--color-accent); }
         [data-theme="dark"] th { color: var(--color-accent); }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid var(--color-border);
-            color: var(--color-text);
-        }
+        td { padding: 15px; border-bottom: 1px solid var(--color-border); color: var(--color-text); }
         tr:hover td { background-color: rgba(0,0,0,0.02); }
         [data-theme="dark"] tr:hover td { background-color: rgba(255,255,255,0.02); }
 
-        .badge-avg {
-            background-color: rgba(32, 226, 200, 0.2);
-            color: var(--color-header);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 700;
-        }
+        .badge-avg { background-color: rgba(32, 226, 200, 0.2); color: var(--color-header); padding: 4px 8px; border-radius: 4px; font-weight: 700; }
         [data-theme="dark"] .badge-avg { color: var(--color-accent); }
 
-        /* UI Elements */
-        .btn {
-            background-color: var(--color-accent);
-            color: #231372;
-            padding: 10px 24px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: filter 0.2s;
-        }
+        .btn { background-color: var(--color-accent); color: #231372; padding: 10px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; }
         .btn:hover { filter: brightness(1.1); }
-        
-        /* Switch */
-        .theme-toggle-container { 
-            padding: 20px; 
-            border-top: 1px solid var(--color-border); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            margin-top: auto; /* Empurra para o fundo */
-        }
-        
+
+        /* Toggle Switch */
+        .theme-toggle-container { padding: 20px; border-top: 1px solid var(--color-border); display: flex; justify-content: center; align-items: center; margin-top: auto; }
         .switch { position: relative; display: inline-block; width: 50px; height: 26px; margin: 0 10px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
@@ -299,12 +213,8 @@
         input:checked + .slider { background-color: var(--color-accent); }
         input:checked + .slider:before { transform: translateX(24px); }
 
-        /* SVG Styles (Fixos) */
-        .cls-1 { fill: none; }
-        .cls-2 { clip-path: url(#clippath-1); }
-        .cls-3 { fill: url(#Gradiente_sem_nome_10); }
-        .cls-4 { fill: #24282a; } /* Classe que contém as letras, será manipulada pelo CSS do dark mode */
-        .cls-5 { clip-path: url(#clippath); }
+        /* SVG Styles */
+        .cls-1{fill:none;}.cls-3{fill:url(#Gradiente_sem_nome_10);}.cls-4{fill:#24282a;}.cls-5{clip-path:url(#clippath);}
 
     </style>
 </head>
@@ -312,7 +222,7 @@
 
     <nav class="sidebar">
         <div class="sidebar-header">
-            <svg id="Camada_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 837.7 245.66">
+             <svg id="Camada_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 837.7 245.66">
                 <defs>
                     <linearGradient id="Gradiente_sem_nome_10" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" stop-color="#231372"/>
@@ -343,10 +253,10 @@
         </div>
         
         <ul class="sidebar-menu">
-            <li><a href="#" class="active"><i class="fas fa-columns"></i> Dashboard</a></li>
-            <li><a href="#"><i class="fas fa-chart-pie"></i> Performance N1</a></li>
-            <li><a href="#"><i class="fas fa-history"></i> Histórico 24/25</a></li>
-            <li><a href="#"><i class="fas fa-users"></i> Equipas</a></li>
+            <li><a data-view="dashboard" class="active"><i class="fas fa-columns"></i> Dashboard</a></li>
+            <li><a data-view="performance"><i class="fas fa-chart-pie"></i> Performance N1</a></li>
+            <li><a data-view="history"><i class="fas fa-history"></i> Histórico 24/25</a></li>
+            <li><a data-view="teams"><i class="fas fa-users"></i> Equipas</a></li>
         </ul>
 
         <div class="theme-toggle-container">
@@ -366,68 +276,82 @@
                 <p style="color: var(--color-text-muted);">Análise de Tempo Médio de Atendimento (N1) - Quarters 2024 & 2025</p>
             </div>
             <div>
-                <button class="btn"><i class="fas fa-download"></i> Exportar Dados</button>
+                <button class="btn"><i class="fas fa-download"></i> Exportar Relatório</button>
             </div>
         </header>
 
-        <section class="cards-grid">
-            <div class="card">
-                <div class="card-title">Média Global N1</div>
-                <div class="card-value" id="kpi-global">--</div>
-                <div class="card-trend">Horas Totais (Avg)</div>
-            </div>
-            <div class="card">
-                <div class="card-title">Maior Tempo Médio</div>
-                <div class="card-value trend-bad" id="kpi-slowest-val">--</div>
-                <div class="card-trend" id="kpi-slowest-name">Categoria</div>
-            </div>
-            <div class="card">
-                <div class="card-title">Melhor Performance</div>
-                <div class="card-value trend-good" id="kpi-fastest-val">--</div>
-                <div class="card-trend" id="kpi-fastest-name">Categoria</div>
-            </div>
-            <div class="card">
-                <div class="card-title">Categorias Monitorizadas</div>
-                <div class="card-value" id="kpi-count">--</div>
-                <div class="card-trend">Ativas no período</div>
-            </div>
-        </section>
-
-        <section class="charts-row">
+        <div id="view-dashboard" class="view-section active">
+            <section class="cards-grid">
+                <div class="card">
+                    <div class="card-title">Média Global N1</div>
+                    <div class="card-value" id="kpi-global">--</div>
+                    <div class="card-trend">Horas Totais (Avg)</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Maior Tempo Médio</div>
+                    <div class="card-value trend-bad" id="kpi-slowest-val">--</div>
+                    <div class="card-trend" id="kpi-slowest-name">Categoria</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Melhor Performance</div>
+                    <div class="card-value trend-good" id="kpi-fastest-val">--</div>
+                    <div class="card-trend" id="kpi-fastest-name">Categoria</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Categorias Monitorizadas</div>
+                    <div class="card-value" id="kpi-count">--</div>
+                    <div class="card-trend">Ativas no período</div>
+                </div>
+            </section>
             <div class="chart-container">
                 <h2>Evolução Top 5 (Mais Lentas)</h2>
                 <canvas id="trendChart"></canvas>
             </div>
-            <div class="chart-container">
-                <h2>Ranking por Categoria (Global)</h2>
+        </div>
+
+        <div id="view-performance" class="view-section">
+            <div class="chart-container" style="height: 600px;">
+                <h2>Ranking Global (Tempo Médio)</h2>
                 <canvas id="barChart"></canvas>
             </div>
-        </section>
+        </div>
 
-        <section class="table-container">
-            <h2>Detalhamento por Quarter</h2>
-            <div style="overflow-x:auto; margin-top: 15px;">
-                <table id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>Categoria</th>
-                            <th>Área</th>
-                            <th>Média N1</th>
-                            <th>Q1 '24</th>
-                            <th>Q2 '24</th>
-                            <th>Q3 '24</th>
-                            <th>Q4 '24</th>
-                            <th>Q1 '25</th>
-                            <th>Q2 '25</th>
-                            <th>Q3 '25</th>
-                            <th>Q4 '25</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
+        <div id="view-history" class="view-section">
+            <section class="table-container">
+                <h2>Histórico Trimestral (Detalhado)</h2>
+                <div style="overflow-x:auto; margin-top: 15px;">
+                    <table id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Área</th>
+                                <th>Média N1</th>
+                                <th>Q1 '24</th>
+                                <th>Q2 '24</th>
+                                <th>Q3 '24</th>
+                                <th>Q4 '24</th>
+                                <th>Q1 '25</th>
+                                <th>Q2 '25</th>
+                                <th>Q3 '25</th>
+                                <th>Q4 '25</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <div id="view-teams" class="view-section">
+            <div class="chart-container">
+                <h2>Performance Média por Área (Equipa)</h2>
+                <canvas id="teamsChart"></canvas>
             </div>
-        </section>
+            <div style="margin-top:20px; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:20px;" id="teams-cards">
+                </div>
+        </div>
+
     </main>
 
     <script>
@@ -465,19 +389,43 @@
             {"Category": "PowerBI", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 6.11, "Q3_2025": 66.17, "Q4_2025": 0.0}
         ];
 
-        // --- LÓGICA DASHBOARD ---
+        // --- APP LOGIC ---
         const themeSwitch = document.getElementById('theme-switch');
         const body = document.body;
         let trendChartInstance = null;
         let barChartInstance = null;
+        let teamsChartInstance = null;
 
         document.addEventListener('DOMContentLoaded', () => {
+            setupNavigation();
             populateCards();
             initCharts();
             initTable();
+            initTeamsView(); // Nova função para equipas
         });
 
-        // 1. Toggle Theme
+        // Navigation Logic (Tab System)
+        function setupNavigation() {
+            const links = document.querySelectorAll('.sidebar-menu a');
+            const views = document.querySelectorAll('.view-section');
+
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Remove active class
+                    links.forEach(l => l.classList.remove('active'));
+                    views.forEach(v => v.classList.remove('active'));
+
+                    // Add active class
+                    link.classList.add('active');
+                    const viewId = `view-${link.dataset.view}`;
+                    document.getElementById(viewId).classList.add('active');
+                });
+            });
+        }
+
+        // Toggle Theme
         themeSwitch.addEventListener('change', () => {
             if (themeSwitch.checked) {
                 body.setAttribute('data-theme', 'dark');
@@ -488,7 +436,6 @@
             }
         });
 
-        // 2. Cards
         function populateCards() {
             document.getElementById('kpi-global').innerText = summaryData.Average_N1 + 'h';
             const sorted = [...detailsData].sort((a, b) => b.Average_N1 - a.Average_N1);
@@ -507,7 +454,6 @@
             document.getElementById('kpi-count').innerText = detailsData.length;
         }
 
-        // 3. Charts
         function initCharts() {
             const ctxTrend = document.getElementById('trendChart').getContext('2d');
             const ctxBar = document.getElementById('barChart').getContext('2d');
@@ -542,7 +488,7 @@
                 }
             });
 
-            const sortedBarData = [...detailsData].sort((a, b) => b.Average_N1 - a.Average_N1).slice(0, 10);
+            const sortedBarData = [...detailsData].sort((a, b) => b.Average_N1 - a.Average_N1);
             
             barChartInstance = new Chart(ctxBar, {
                 type: 'bar',
@@ -568,10 +514,51 @@
             });
         }
 
+        // Lógica para a View "Equipas"
+        function initTeamsView() {
+            const ctxTeams = document.getElementById('teamsChart').getContext('2d');
+            const teamsData = {};
+            const teamsCount = {};
+
+            // Calcular médias por Área
+            detailsData.forEach(d => {
+                if (!teamsData[d.Area]) {
+                    teamsData[d.Area] = 0;
+                    teamsCount[d.Area] = 0;
+                }
+                teamsData[d.Area] += d.Average_N1;
+                teamsCount[d.Area]++;
+            });
+
+            const labels = Object.keys(teamsData);
+            const values = labels.map(area => (teamsData[area] / teamsCount[area]).toFixed(2));
+
+            teamsChartInstance = new Chart(ctxTeams, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Média por Área (h)',
+                        data: values,
+                        backgroundColor: ['#231372', '#20E2C8', '#6106AF', '#E74C3C'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#e0e0e0' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
         function updateChartsTheme(isDark) {
             const textColor = isDark ? '#ecf0f1' : '#24282A';
             const gridColor = isDark ? '#2c3036' : '#e0e0e0';
-            [trendChartInstance, barChartInstance].forEach(chart => {
+            [trendChartInstance, barChartInstance, teamsChartInstance].forEach(chart => {
                 if(chart) {
                     chart.options.scales.x.ticks.color = textColor;
                     chart.options.scales.y.ticks.color = textColor;
@@ -583,7 +570,6 @@
             });
         }
 
-        // 4. Table
         function initTable() {
             const tbody = document.querySelector('#dataTable tbody');
             let html = '';
