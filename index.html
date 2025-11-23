@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clever Advertising - Dashboard N1</title>
+    <title>Clever Advertising - Dashboard SLA</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -82,12 +82,13 @@
             display: block;
         }
         
-        [data-theme="dark"] .cls-4 { fill: #ffffff !important; } /* Fix SVG Dark Mode */
+        [data-theme="dark"] .cls-4 { fill: #ffffff !important; }
 
         .sidebar-menu {
             list-style: none;
             padding: 20px 15px;
             flex-grow: 1;
+            overflow-y: auto; /* Scroll se muitos itens */
         }
 
         .sidebar-menu li { margin-bottom: 8px; }
@@ -102,6 +103,7 @@
             transition: all 0.2s;
             font-weight: 600;
             cursor: pointer;
+            font-size: 0.95rem;
         }
 
         .sidebar-menu a:hover, .sidebar-menu a.active {
@@ -124,7 +126,6 @@
             width: calc(100% - var(--sidebar-width));
         }
 
-        /* Header Content */
         header {
             display: flex;
             justify-content: space-between;
@@ -143,10 +144,8 @@
         h1 { font-size: 2.2rem; letter-spacing: -0.5px; }
         .highlight { color: var(--color-accent); }
 
-        /* Views (Tab System) */
         .view-section { display: none; animation: fadeIn 0.4s ease; }
         .view-section.active { display: block; }
-        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Cards */
@@ -172,7 +171,6 @@
         .trend-bad { color: #e74c3c !important; } 
         .trend-good { color: #20E2C8 !important; } 
 
-        /* Charts & Tables */
         .chart-container {
             background-color: var(--color-card-bg);
             padding: 25px;
@@ -204,7 +202,6 @@
         .btn { background-color: var(--color-accent); color: #231372; padding: 10px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; }
         .btn:hover { filter: brightness(1.1); }
 
-        /* Toggle Switch */
         .theme-toggle-container { padding: 20px; border-top: 1px solid var(--color-border); display: flex; justify-content: center; align-items: center; margin-top: auto; }
         .switch { position: relative; display: inline-block; width: 50px; height: 26px; margin: 0 10px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -213,7 +210,7 @@
         input:checked + .slider { background-color: var(--color-accent); }
         input:checked + .slider:before { transform: translateX(24px); }
 
-        /* SVG Styles */
+        /* SVG Classes */
         .cls-1{fill:none;}.cls-3{fill:url(#Gradiente_sem_nome_10);}.cls-4{fill:#24282a;}.cls-5{clip-path:url(#clippath);}
 
     </style>
@@ -222,7 +219,7 @@
 
     <nav class="sidebar">
         <div class="sidebar-header">
-             <svg id="Camada_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 837.7 245.66">
+            <svg id="Camada_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 837.7 245.66">
                 <defs>
                     <linearGradient id="Gradiente_sem_nome_10" x1="0%" y1="0%" x2="100%" y2="0%">
                         <stop offset="0%" stop-color="#231372"/>
@@ -253,9 +250,11 @@
         </div>
         
         <ul class="sidebar-menu">
-            <li><a data-view="dashboard" class="active"><i class="fas fa-columns"></i> Dashboard</a></li>
+            <li><a data-view="dashboard" class="active"><i class="fas fa-columns"></i> Dashboard N1</a></li>
             <li><a data-view="performance"><i class="fas fa-chart-pie"></i> Performance N1</a></li>
-            <li><a data-view="history"><i class="fas fa-history"></i> Histórico 24/25</a></li>
+            <li><a data-view="n2"><i class="fas fa-layer-group"></i> Performance N2</a></li>
+            <li><a data-view="n3"><i class="fas fa-layer-group"></i> Performance N3</a></li>
+            <li><a data-view="history"><i class="fas fa-history"></i> Histórico</a></li>
             <li><a data-view="teams"><i class="fas fa-users"></i> Equipas</a></li>
         </ul>
 
@@ -273,7 +272,7 @@
         <header>
             <div>
                 <h1>Clever Advertising <span class="highlight">Dashboard</span></h1>
-                <p style="color: var(--color-text-muted);">Análise de Tempo Médio de Atendimento (N1) - Quarters 2024 & 2025</p>
+                <p style="color: var(--color-text-muted);">Análise de Tempo Médio de Atendimento (SLA) - 2024 & 2025</p>
             </div>
             <div>
                 <button class="btn"><i class="fas fa-download"></i> Exportar Relatório</button>
@@ -288,56 +287,87 @@
                     <div class="card-trend">Horas Totais (Avg)</div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Maior Tempo Médio</div>
-                    <div class="card-value trend-bad" id="kpi-slowest-val">--</div>
-                    <div class="card-trend" id="kpi-slowest-name">Categoria</div>
+                    <div class="card-title">Média Global N2</div>
+                    <div class="card-value" id="kpi-global-n2">--</div>
+                    <div class="card-trend">Horas Totais (Avg)</div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Melhor Performance</div>
-                    <div class="card-value trend-good" id="kpi-fastest-val">--</div>
-                    <div class="card-trend" id="kpi-fastest-name">Categoria</div>
+                    <div class="card-title">Média Global N3</div>
+                    <div class="card-value" id="kpi-global-n3">--</div>
+                    <div class="card-trend">Horas Totais (Avg)</div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Categorias Monitorizadas</div>
+                    <div class="card-title">Categorias N1</div>
                     <div class="card-value" id="kpi-count">--</div>
-                    <div class="card-trend">Ativas no período</div>
+                    <div class="card-trend">Monitorizadas</div>
                 </div>
             </section>
             <div class="chart-container">
-                <h2>Evolução Top 5 (Mais Lentas)</h2>
+                <h2>Evolução Top 5 (Mais Lentas N1)</h2>
                 <canvas id="trendChart"></canvas>
             </div>
         </div>
 
         <div id="view-performance" class="view-section">
             <div class="chart-container" style="height: 600px;">
-                <h2>Ranking Global (Tempo Médio)</h2>
+                <h2>Ranking Global N1</h2>
                 <canvas id="barChart"></canvas>
+            </div>
+        </div>
+
+        <div id="view-n2" class="view-section">
+            <div class="chart-container" style="height: 600px;">
+                <h2>Ranking Global N2</h2>
+                <canvas id="barChartN2"></canvas>
+            </div>
+            <div class="table-container" style="margin-top:20px;">
+                 <h2>Detalhes N2</h2>
+                 <table id="tableN2">
+                     <thead>
+                         <tr>
+                             <th>Categoria</th><th>Área</th><th>Média N2</th>
+                             <th>Q1 '24</th><th>Q2 '24</th><th>Q3 '24</th><th>Q4 '24</th>
+                             <th>Q1 '25</th><th>Q2 '25</th><th>Q3 '25</th><th>Q4 '25</th>
+                         </tr>
+                     </thead>
+                     <tbody></tbody>
+                 </table>
+            </div>
+        </div>
+
+        <div id="view-n3" class="view-section">
+            <div class="chart-container" style="height: 600px;">
+                <h2>Ranking Global N3</h2>
+                <canvas id="barChartN3"></canvas>
+            </div>
+            <div class="table-container" style="margin-top:20px;">
+                 <h2>Detalhes N3</h2>
+                 <table id="tableN3">
+                     <thead>
+                         <tr>
+                             <th>Categoria</th><th>Área</th><th>Média N3</th>
+                             <th>Q1 '24</th><th>Q2 '24</th><th>Q3 '24</th><th>Q4 '24</th>
+                             <th>Q1 '25</th><th>Q2 '25</th><th>Q3 '25</th><th>Q4 '25</th>
+                         </tr>
+                     </thead>
+                     <tbody></tbody>
+                 </table>
             </div>
         </div>
 
         <div id="view-history" class="view-section">
             <section class="table-container">
-                <h2>Histórico Trimestral (Detalhado)</h2>
+                <h2>Histórico N1 (Detalhado)</h2>
                 <div style="overflow-x:auto; margin-top: 15px;">
                     <table id="dataTable">
                         <thead>
                             <tr>
-                                <th>Categoria</th>
-                                <th>Área</th>
-                                <th>Média N1</th>
-                                <th>Q1 '24</th>
-                                <th>Q2 '24</th>
-                                <th>Q3 '24</th>
-                                <th>Q4 '24</th>
-                                <th>Q1 '25</th>
-                                <th>Q2 '25</th>
-                                <th>Q3 '25</th>
-                                <th>Q4 '25</th>
+                                <th>Categoria</th><th>Área</th><th>Média N1</th>
+                                <th>Q1 '24</th><th>Q2 '24</th><th>Q3 '24</th><th>Q4 '24</th>
+                                <th>Q1 '25</th><th>Q2 '25</th><th>Q3 '25</th><th>Q4 '25</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </section>
@@ -345,18 +375,16 @@
 
         <div id="view-teams" class="view-section">
             <div class="chart-container">
-                <h2>Performance Média por Área (Equipa)</h2>
+                <h2>Performance Média por Área (N1)</h2>
                 <canvas id="teamsChart"></canvas>
             </div>
-            <div style="margin-top:20px; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:20px;" id="teams-cards">
-                </div>
         </div>
 
     </main>
 
     <script>
-        // --- DADOS ---
-        const detailsData = [
+        // --- DADOS N1 ---
+        const n1Data = [
             {"Category": "Access", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.01, "Q1_2025": 0.0, "Q2_2025": 16.65, "Q3_2025": 12.66, "Q4_2025": 17.71, "Average_N1": 15.68, "Area": "Infra"},
             {"Category": "Acessories / Notebook", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 342.59, "Q2_2025": 21.78, "Q3_2025": 68.82, "Q4_2025": 10.58, "Average_N1": 110.94, "Area": "Infra"},
             {"Category": "Advertising", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.12, "Q3_2025": 1.79, "Q4_2025": 0.0, "Average_N1": 0.97, "Area": "Service"},
@@ -379,213 +407,187 @@
             {"Category": "Information Security", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 0.28, "Q4_2025": 0.0, "Average_N1": 0.09, "Area": "Infra"}
         ];
 
-        const summaryData = {"Average_N1": 49.19};
-
-        const top5Data = [
-            {"Category": "Improvement", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 485.77, "Q4_2025": 193.79},
-            {"Category": "Acessories / Notebook", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 342.59, "Q2_2025": 21.78, "Q3_2025": 68.82, "Q4_2025": 10.58},
-            {"Category": "RPA", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 28.06, "Q3_2025": 78.97, "Q4_2025": 0.0},
-            {"Category": "Biometric Control", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 54.94, "Q3_2025": 33.97, "Q4_2025": 31.51},
-            {"Category": "PowerBI", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 6.11, "Q3_2025": 66.17, "Q4_2025": 0.0}
+        // --- DADOS N2 (INJETADOS) ---
+        const n2Data = [
+            {"Category": "Creatives", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 6.11, "Q3_2025": 5.1, "Q4_2025": 0.0, "Total": 11.21, "Average_N2": 3.74, "Area": "Service"},
+            {"Category": "Advertising", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 4.43, "Q3_2025": 4.91, "Q4_2025": 12.98, "Total": 22.32, "Average_N2": 7.44, "Area": "Service"},
+            {"Category": "CleverAds", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.59, "Q2_2025": 69.96, "Q3_2025": 30.42, "Q4_2025": 46.47, "Total": 147.45, "Average_N2": 49.15, "Area": "Service"},
+            {"Category": "Implementation", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 1.24, "Q2_2025": 1.34, "Q3_2025": 43.03, "Q4_2025": 0.0, "Total": 45.61, "Average_N2": 15.2, "Area": "Service"},
+            {"Category": "RPA", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 28.06, "Q3_2025": 78.97, "Q4_2025": 0.0, "Total": 107.03, "Average_N2": 35.68, "Area": "Delivery"},
+            {"Category": "Access", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 2.76, "Q3_2025": 13.95, "Q4_2025": 3.56, "Total": 20.27, "Average_N2": 6.76, "Area": "Infra"},
+            {"Category": "Traffic", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 1.42, "Q2_2025": 2.3, "Q3_2025": 25.87, "Q4_2025": 3.73, "Total": 33.32, "Average_N2": 8.33, "Area": "Service"},
+            {"Category": "Jira /Confluence", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.67, "Q3_2025": 23.21, "Q4_2025": 0.0, "Total": 23.88, "Average_N2": 7.96, "Area": "Service"},
+            {"Category": "New Services", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 55.17, "Q3_2025": 0.53, "Q4_2025": 0.0, "Total": 55.7, "Average_N2": 27.85, "Area": "Core"},
+            {"Category": "Acessories / Notebook", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 3.83, "Q2_2025": 22.49, "Q3_2025": 6.09, "Q4_2025": 7.78, "Total": 40.19, "Average_N2": 10.05, "Area": "Infra"},
+            {"Category": "Network", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 16.61, "Q2_2025": 117.54, "Q3_2025": 0.68, "Q4_2025": 13.57, "Total": 148.4, "Average_N2": 37.1, "Area": "Infra"},
+            {"Category": "New Solution Request", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 1.96, "Q2_2025": 17.33, "Q3_2025": 134.87, "Q4_2025": 0.0, "Total": 154.16, "Average_N2": 51.39, "Area": "Service"},
+            {"Category": "B2B / Approvals / Commission", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.4, "Q3_2025": 0.74, "Q4_2025": 0.0, "Total": 1.14, "Average_N2": 0.38, "Area": "Core"},
+            {"Category": "Resolution AUTO", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 2.98, "Q4_2025": 0.0, "Total": 2.98, "Average_N2": 2.98, "Area": "Service"},
+            {"Category": "Biometric Control", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 34.59, "Q4_2025": 0.0, "Total": 34.59, "Average_N2": 34.59, "Area": "Corporate"},
+            {"Category": "PowerBI", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 98.21, "Q2_2025": 0.0, "Q3_2025": 17.08, "Q4_2025": 0.0, "Total": 115.29, "Average_N2": 57.64, "Area": "Service"},
+            {"Category": "Improvement", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 3.68, "Q4_2025": 27.41, "Total": 31.09, "Average_N2": 15.54, "Area": "Service"},
+            {"Category": "Antivirus", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 20.49, "Q4_2025": 0.0, "Total": 20.49, "Average_N2": 20.49, "Area": "Infra"},
+            {"Category": "Printer", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 2.53, "Q4_2025": 0.0, "Total": 2.53, "Average_N2": 2.53, "Area": "Infra"}
         ];
+
+        // --- DADOS N3 (INJETADOS) ---
+        const n3Data = [
+            {"Category": "Access", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 3.23, "Q2_2025": 40.16, "Q3_2025": 21.71, "Q4_2025": 0.0, "Total": 65.1, "Average_N3": 21.7, "Area": "Infra"},
+            {"Category": "Network", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 24.09, "Q4_2025": 0.0, "Total": 24.09, "Average_N3": 24.09, "Area": "Infra"},
+            {"Category": "Traffic", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 2.94, "Q3_2025": 24.38, "Q4_2025": 0.0, "Total": 27.32, "Average_N3": 13.66, "Area": "Service"},
+            {"Category": "B2B / Approvals / Commission", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 15.98, "Q4_2025": 0.0, "Total": 15.98, "Average_N3": 7.99, "Area": "Core"},
+            {"Category": "Advertising", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 8.8, "Q4_2025": 94.61, "Total": 103.41, "Average_N3": 51.71, "Area": "Core"},
+            {"Category": "Acessories / Notebook", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 31.73, "Q4_2025": 115.16, "Total": 146.89, "Average_N3": 73.45, "Area": "Infra"},
+            {"Category": "Jira /Confluence", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 63.8, "Q4_2025": 23.21, "Total": 87.01, "Average_N3": 43.51, "Area": "Service"},
+            {"Category": "CleverAds", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 208.9, "Q4_2025": 34.59, "Total": 243.49, "Average_N3": 30.44, "Area": "Corporate"},
+            {"Category": "New Solution Request", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 41.22, "Q4_2025": 170.75, "Total": 211.97, "Average_N3": 105.99, "Area": "Service"},
+            {"Category": "PowerBI", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 341.01, "Q4_2025": 57.98, "Total": 398.99, "Average_N3": 199.5, "Area": "Service"},
+            {"Category": "Implementation", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 33.08, "Q4_2025": 0.0, "Total": 33.08, "Average_N3": 33.08, "Area": "Service"},
+            {"Category": "Data Base", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 0.0, "Q4_2025": 2.01, "Total": 2.01, "Average_N3": 2.01, "Area": "Infra"},
+            {"Category": "RPA", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 153.55, "Q4_2025": 26.51, "Total": 180.06, "Average_N3": 90.03, "Area": "Delivery"},
+            {"Category": "Resolution AUTO", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 27.42, "Q4_2025": 0.0, "Total": 27.42, "Average_N3": 27.42, "Area": "Service"},
+            {"Category": "Improvement", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 0.0, "Q4_2025": 115.09, "Total": 115.09, "Average_N3": 115.09, "Area": "Service"}
+        ];
+
+        const summaryData = {"Average_N1": 49.19, "Average_N2": 41.22, "Average_N3": 61.23};
+        const top5DataN1 = n1Data.sort((a,b)=>b.Average_N1 - a.Average_N1).slice(0,5);
 
         // --- APP LOGIC ---
         const themeSwitch = document.getElementById('theme-switch');
         const body = document.body;
-        let trendChartInstance = null;
-        let barChartInstance = null;
-        let teamsChartInstance = null;
+        let charts = {};
 
         document.addEventListener('DOMContentLoaded', () => {
             setupNavigation();
             populateCards();
             initCharts();
-            initTable();
-            initTeamsView(); // Nova função para equipas
+            initTable('dataTable', n1Data, 'Average_N1');
+            initTable('tableN2', n2Data, 'Average_N2');
+            initTable('tableN3', n3Data, 'Average_N3');
+            initTeamsView();
         });
 
-        // Navigation Logic (Tab System)
         function setupNavigation() {
             const links = document.querySelectorAll('.sidebar-menu a');
             const views = document.querySelectorAll('.view-section');
-
             links.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    
-                    // Remove active class
                     links.forEach(l => l.classList.remove('active'));
                     views.forEach(v => v.classList.remove('active'));
-
-                    // Add active class
                     link.classList.add('active');
-                    const viewId = `view-${link.dataset.view}`;
-                    document.getElementById(viewId).classList.add('active');
+                    document.getElementById(`view-${link.dataset.view}`).classList.add('active');
                 });
             });
         }
 
-        // Toggle Theme
         themeSwitch.addEventListener('change', () => {
-            if (themeSwitch.checked) {
-                body.setAttribute('data-theme', 'dark');
-                updateChartsTheme(true);
-            } else {
-                body.setAttribute('data-theme', 'light');
-                updateChartsTheme(false);
-            }
+            body.setAttribute('data-theme', themeSwitch.checked ? 'dark' : 'light');
+            updateChartsTheme(themeSwitch.checked);
         });
 
         function populateCards() {
             document.getElementById('kpi-global').innerText = summaryData.Average_N1 + 'h';
-            const sorted = [...detailsData].sort((a, b) => b.Average_N1 - a.Average_N1);
-            const slowest = sorted[0];
-            const activeCats = sorted.filter(d => d.Average_N1 > 0.05);
-            const fastest = activeCats[activeCats.length - 1];
-
-            if(slowest) {
-                document.getElementById('kpi-slowest-val').innerText = slowest.Average_N1 + 'h';
-                document.getElementById('kpi-slowest-name').innerText = slowest.Category;
-            }
-            if(fastest) {
-                document.getElementById('kpi-fastest-val').innerText = fastest.Average_N1 + 'h';
-                document.getElementById('kpi-fastest-name').innerText = fastest.Category;
-            }
-            document.getElementById('kpi-count').innerText = detailsData.length;
+            document.getElementById('kpi-global-n2').innerText = summaryData.Average_N2 + 'h';
+            document.getElementById('kpi-global-n3').innerText = summaryData.Average_N3 + 'h';
+            document.getElementById('kpi-count').innerText = n1Data.length;
         }
 
         function initCharts() {
+            // Trend N1
             const ctxTrend = document.getElementById('trendChart').getContext('2d');
-            const ctxBar = document.getElementById('barChart').getContext('2d');
+            const quarters = ['Q1 24','Q2 24','Q3 24','Q4 24','Q1 25','Q2 25','Q3 25','Q4 25'];
+            const colors = ['#231372', '#20E2C8', '#6106AF', '#E74C3C', '#F39C12'];
             
-            const quarters = ['Q1_2024', 'Q2_2024', 'Q3_2024', 'Q4_2024', 'Q1_2025', 'Q2_2025', 'Q3_2025', 'Q4_2025'];
-            const quarterLabels = ['Q1 24', 'Q2 24', 'Q3 24', 'Q4 24', 'Q1 25', 'Q2 25', 'Q3 25', 'Q4 25'];
-            const brandColors = ['#231372', '#20E2C8', '#6106AF', '#E74C3C', '#F39C12'];
-
-            const datasetsTrend = top5Data.map((item, index) => {
-                return {
-                    label: item.Category,
-                    data: quarters.map(q => item[q]),
-                    borderColor: brandColors[index % brandColors.length],
-                    backgroundColor: brandColors[index % brandColors.length],
-                    tension: 0.3,
-                    fill: false,
-                    borderWidth: 2
-                };
-            });
-
-            trendChartInstance = new Chart(ctxTrend, {
+            charts.trend = new Chart(ctxTrend, {
                 type: 'line',
-                data: { labels: quarterLabels, datasets: datasetsTrend },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } },
-                    scales: {
-                        y: { beginAtZero: true, title: { display: true, text: 'Horas' }, grid: { color: '#e0e0e0' } },
-                        x: { grid: { display: false } }
-                    }
-                }
+                data: {
+                    labels: quarters,
+                    datasets: top5DataN1.map((d,i) => ({
+                        label: d.Category,
+                        data: [d.Q1_2024, d.Q2_2024, d.Q3_2024, d.Q4_2024, d.Q1_2025, d.Q2_2025, d.Q3_2025, d.Q4_2025],
+                        borderColor: colors[i%5],
+                        backgroundColor: colors[i%5],
+                        tension: 0.3,
+                        fill: false
+                    }))
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position:'bottom' } }, scales: { x:{grid:{display:false}} } }
             });
 
-            const sortedBarData = [...detailsData].sort((a, b) => b.Average_N1 - a.Average_N1);
-            
-            barChartInstance = new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: sortedBarData.map(d => d.Category),
-                    datasets: [{
-                        label: 'Média N1 (Horas)',
-                        data: sortedBarData.map(d => d.Average_N1),
-                        backgroundColor: '#20E2C8',
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { beginAtZero: true, grid: { color: '#e0e0e0' } },
-                        y: { grid: { display: false } }
-                    }
-                }
-            });
+            // Bar Charts Helper
+            const createBarChart = (id, data, key) => {
+                const sorted = [...data].sort((a,b)=>b[key]-a[key]);
+                return new Chart(document.getElementById(id).getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: sorted.map(d => d.Category),
+                        datasets: [{
+                            label: 'Média (Horas)',
+                            data: sorted.map(d => d[key]),
+                            backgroundColor: '#20E2C8',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}} }
+                });
+            };
+
+            charts.barN1 = createBarChart('barChart', n1Data, 'Average_N1');
+            charts.barN2 = createBarChart('barChartN2', n2Data, 'Average_N2');
+            charts.barN3 = createBarChart('barChartN3', n3Data, 'Average_N3');
         }
 
-        // Lógica para a View "Equipas"
         function initTeamsView() {
-            const ctxTeams = document.getElementById('teamsChart').getContext('2d');
-            const teamsData = {};
-            const teamsCount = {};
-
-            // Calcular médias por Área
-            detailsData.forEach(d => {
-                if (!teamsData[d.Area]) {
-                    teamsData[d.Area] = 0;
-                    teamsCount[d.Area] = 0;
-                }
-                teamsData[d.Area] += d.Average_N1;
-                teamsCount[d.Area]++;
+            const ctx = document.getElementById('teamsChart').getContext('2d');
+            const teamsData = {}; const counts = {};
+            n1Data.forEach(d => {
+                if(!teamsData[d.Area]) { teamsData[d.Area]=0; counts[d.Area]=0; }
+                teamsData[d.Area] += d.Average_N1; counts[d.Area]++;
             });
-
             const labels = Object.keys(teamsData);
-            const values = labels.map(area => (teamsData[area] / teamsCount[area]).toFixed(2));
-
-            teamsChartInstance = new Chart(ctxTeams, {
+            const values = labels.map(l => (teamsData[l]/counts[l]).toFixed(2));
+            
+            charts.teams = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Média por Área (h)',
+                        label: 'Média por Área',
                         data: values,
-                        backgroundColor: ['#231372', '#20E2C8', '#6106AF', '#E74C3C'],
+                        backgroundColor: ['#231372','#20E2C8','#6106AF','#E74C3C'],
                         borderRadius: 6
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: '#e0e0e0' } },
-                        x: { grid: { display: false } }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { x:{grid:{display:false}} } }
             });
         }
 
         function updateChartsTheme(isDark) {
-            const textColor = isDark ? '#ecf0f1' : '#24282A';
-            const gridColor = isDark ? '#2c3036' : '#e0e0e0';
-            [trendChartInstance, barChartInstance, teamsChartInstance].forEach(chart => {
-                if(chart) {
-                    chart.options.scales.x.ticks.color = textColor;
-                    chart.options.scales.y.ticks.color = textColor;
-                    if(chart.options.scales.x.grid) chart.options.scales.x.grid.color = gridColor;
-                    if(chart.options.scales.y.grid) chart.options.scales.y.grid.color = gridColor;
-                    if(chart.options.plugins.legend) chart.options.plugins.legend.labels.color = textColor;
-                    chart.update();
+            const color = isDark ? '#fff' : '#24282A';
+            const grid = isDark ? '#2c3036' : '#e0e0e0';
+            Object.values(charts).forEach(c => {
+                if(c) {
+                    c.options.scales.x.ticks.color = color;
+                    c.options.scales.y.ticks.color = color;
+                    if(c.options.scales.x.grid) c.options.scales.x.grid.color = grid;
+                    if(c.options.scales.y.grid) c.options.scales.y.grid.color = grid;
+                    if(c.options.plugins.legend) c.options.plugins.legend.labels.color = color;
+                    c.update();
                 }
             });
         }
 
-        function initTable() {
-            const tbody = document.querySelector('#dataTable tbody');
+        function initTable(id, data, avgKey) {
+            const tbody = document.querySelector(`#${id} tbody`);
             let html = '';
-            detailsData.forEach(row => {
+            data.forEach(r => {
                 html += `<tr>
-                    <td style="font-weight:600; color: var(--color-header);">${row.Category}</td>
-                    <td><span style="font-size:0.85em; opacity:0.8;">${row.Area}</span></td>
-                    <td><span class="badge-avg">${row.Average_N1} h</span></td>
-                    <td>${row.Q1_2024}</td>
-                    <td>${row.Q2_2024}</td>
-                    <td>${row.Q3_2024}</td>
-                    <td>${row.Q4_2024}</td>
-                    <td>${row.Q1_2025}</td>
-                    <td>${row.Q2_2025}</td>
-                    <td>${row.Q3_2025}</td>
-                    <td>${row.Q4_2025}</td>
+                    <td style="font-weight:600; color: var(--color-header);">${r.Category}</td>
+                    <td>${r.Area || '-'}</td>
+                    <td><span class="badge-avg">${r[avgKey]} h</span></td>
+                    <td>${r.Q1_2024}</td><td>${r.Q2_2024}</td><td>${r.Q3_2024}</td><td>${r.Q4_2024}</td>
+                    <td>${r.Q1_2025}</td><td>${r.Q2_2025}</td><td>${r.Q3_2025}</td><td>${r.Q4_2025}</td>
                 </tr>`;
             });
             tbody.innerHTML = html;
