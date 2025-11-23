@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clever Advertising - Dashboard SLA</title>
+    <title>Dashboard N1 - Tempo Médio de Atendimento</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,6 +16,7 @@
     <style>
         /* --- Design System --- */
         :root {
+            /* Cores Base (Light Mode) */
             --color-bg: #f4f4f4;
             --color-card-bg: #ffffff;
             --color-text: #24282A;
@@ -26,13 +27,22 @@
             --color-border: #e0e0e0;
             --color-table-header: rgba(35, 19, 114, 0.05);
             
+            /* Gráficos */
+            --color-graphic-1: #231372;
+            --color-graphic-2: #20E2C8;
+            --color-graphic-3: #6106AF;
+            
+            /* Tipografia */
             --font-text: 'Figtree', sans-serif;
             --font-header: 'Barlow', sans-serif;
             
-            --sidebar-width: 280px; 
+            /* Layout */
+            --sidebar-width: 260px;
+            --header-height: 80px;
             --transition-speed: 0.3s;
         }
 
+        /* Variáveis para Dark Mode */
         [data-theme="dark"] {
             --color-bg: #121418;
             --color-card-bg: #1e2228;
@@ -44,6 +54,7 @@
             --color-table-header: rgba(255,255,255,0.05);
         }
 
+        /* --- Reset & Base --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
@@ -54,7 +65,6 @@
             transition: background-color var(--transition-speed), color var(--transition-speed);
             display: flex;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
         /* --- Sidebar --- */
@@ -67,31 +77,27 @@
             position: fixed;
             height: 100vh;
             z-index: 100;
+            transition: background-color var(--transition-speed), border-color var(--transition-speed);
         }
 
         .sidebar-header {
-            padding: 30px 20px;
-            background-color: var(--color-sidebar);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-bottom: 1px solid var(--color-border);
+            height: var(--header-height);
         }
         
-        .sidebar-header svg {
-            width: 100%;
-            height: auto;
-            max-height: 80px;
-            display: block;
-        }
-        
-        [data-theme="dark"] .cls-4 { fill: #ffffff !important; }
-
         .sidebar-menu {
             list-style: none;
             padding: 20px 15px;
             flex-grow: 1;
-            overflow-y: auto; /* Scroll se muitos itens */
         }
 
-        .sidebar-menu li { margin-bottom: 8px; }
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
 
         .sidebar-menu a {
             display: flex;
@@ -102,12 +108,11 @@
             border-radius: 8px;
             transition: all 0.2s;
             font-weight: 600;
-            cursor: pointer;
             font-size: 0.95rem;
         }
 
         .sidebar-menu a:hover, .sidebar-menu a.active {
-            background-color: rgba(32, 226, 200, 0.15);
+            background-color: rgba(32, 226, 200, 0.15); /* Accent com transparência */
             color: var(--color-header); 
         }
         
@@ -116,39 +121,52 @@
              color: var(--color-accent);
         }
 
-        .sidebar-menu i { margin-right: 15px; width: 20px; text-align: center; }
+        .sidebar-menu i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Toggle Dark Mode */
+        .theme-toggle-container {
+            padding: 20px;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
         /* --- Main Content --- */
         .main-content {
             margin-left: var(--sidebar-width);
             flex-grow: 1;
-            padding: 40px;
+            padding: 30px;
             width: calc(100% - var(--sidebar-width));
         }
 
+        /* --- Header da Página --- */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
-        h1, h2 {
+        h1, h2, h3 {
             font-family: var(--font-header);
             color: var(--color-header);
             font-weight: 700;
             text-transform: uppercase;
         }
-        [data-theme="dark"] h1, [data-theme="dark"] h2 { color: var(--color-accent); }
         
-        h1 { font-size: 2.2rem; letter-spacing: -0.5px; }
-        .highlight { color: var(--color-accent); }
+        [data-theme="dark"] h1, [data-theme="dark"] h2 {
+            color: var(--color-accent);
+        }
 
-        .view-section { display: none; animation: fadeIn 0.4s ease; }
-        .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        h1 { font-size: 2rem; letter-spacing: -0.5px; }
+        h2 { font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--color-text); opacity: 0.9; }
 
-        /* Cards */
+        /* --- Cards --- */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -159,59 +177,156 @@
         .card {
             background-color: var(--color-card-bg);
             padding: 25px;
-            border-radius: 8px;
+            border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.04);
             border: 1px solid var(--color-border);
             transition: transform 0.2s ease;
         }
-        .card:hover { transform: translateY(-3px); }
-        .card-title { font-size: 0.85rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 10px; }
-        .card-value { font-size: 2.2rem; font-weight: 700; color: var(--color-header); font-family: var(--font-header); }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .card-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--color-header);
+            font-family: var(--font-header);
+            margin-bottom: 5px;
+        }
+        
         [data-theme="dark"] .card-value { color: #fff; }
-        .trend-bad { color: #e74c3c !important; } 
-        .trend-good { color: #20E2C8 !important; } 
+
+        .card-trend { font-size: 0.85rem; font-weight: 600; }
+        .trend-bad { color: #e74c3c; } /* Vermelho para tempos altos */
+        .trend-good { color: #20E2C8; } /* Verde/Cyan para tempos baixos */
+
+        /* --- Gráficos --- */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Gráfico de linha maior que o de barra */
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1200px) {
+            .charts-grid { grid-template-columns: 1fr; }
+        }
 
         .chart-container {
             background-color: var(--color-card-bg);
             padding: 25px;
-            border-radius: 8px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
             border: 1px solid var(--color-border);
-            height: 500px;
+            height: 450px;
             position: relative;
-            margin-bottom: 30px;
         }
-        
+
+        /* --- Tabela --- */
         .table-container {
             background-color: var(--color-card-bg);
             padding: 25px;
-            border-radius: 8px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
             border: 1px solid var(--color-border);
             overflow-x: auto;
         }
 
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; white-space: nowrap; }
-        th { text-align: left; padding: 15px; background-color: var(--color-table-header); color: var(--color-header); font-family: var(--font-header); text-transform: uppercase; border-bottom: 2px solid var(--color-accent); }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            background-color: var(--color-table-header);
+            color: var(--color-header);
+            font-family: var(--font-header);
+            font-weight: 700;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--color-accent);
+        }
+        
         [data-theme="dark"] th { color: var(--color-accent); }
-        td { padding: 15px; border-bottom: 1px solid var(--color-border); color: var(--color-text); }
-        tr:hover td { background-color: rgba(0,0,0,0.02); }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+
+        tr:last-child td { border-bottom: none; }
+        
+        tr:hover td {
+            background-color: rgba(0,0,0,0.02);
+        }
         [data-theme="dark"] tr:hover td { background-color: rgba(255,255,255,0.02); }
 
-        .badge-avg { background-color: rgba(32, 226, 200, 0.2); color: var(--color-header); padding: 4px 8px; border-radius: 4px; font-weight: 700; }
+        /* Badge para média */
+        .badge-avg {
+            background-color: rgba(32, 226, 200, 0.2);
+            color: var(--color-header);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
         [data-theme="dark"] .badge-avg { color: var(--color-accent); }
 
-        .btn { background-color: var(--color-accent); color: #231372; padding: 10px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; }
-        .btn:hover { filter: brightness(1.1); }
-
-        .theme-toggle-container { padding: 20px; border-top: 1px solid var(--color-border); display: flex; justify-content: center; align-items: center; margin-top: auto; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; margin: 0 10px; }
+        /* Switch Toggle Customizado */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
         input:checked + .slider { background-color: var(--color-accent); }
         input:checked + .slider:before { transform: translateX(24px); }
-
-        /* SVG Classes */
-        .cls-1{fill:none;}.cls-3{fill:url(#Gradiente_sem_nome_10);}.cls-4{fill:#24282a;}.cls-5{clip-path:url(#clippath);}
+        
+        .btn {
+            background-color: var(--color-accent);
+            color: #231372;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: filter 0.2s;
+        }
+        .btn:hover { filter: brightness(1.1); }
 
     </style>
 </head>
@@ -219,43 +334,17 @@
 
     <nav class="sidebar">
         <div class="sidebar-header">
-            <svg id="Camada_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 837.7 245.66">
-                <defs>
-                    <linearGradient id="Gradiente_sem_nome_10" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#231372"/>
-                        <stop offset="100%" stop-color="#20E2C8"/>
-                    </linearGradient>
-                    <clipPath id="clippath"><rect class="cls-1" x="546.28" y="39.03" width="110.43" height="113"/></clipPath>
-                </defs>
-                <g id="Camada_1">
-                    <path class="cls-4" d="M452.05,129.69v18.74c0,1.99-1.61,3.6-3.6,3.6h-67.98c-1.99,0-3.6-1.61-3.6-3.6h0V42.63c0-1.99,1.61-3.6,3.6-3.6h20.9c1.99,0,3.6,1.61,3.6,3.6h0v83.46h43.47c1.99,0,3.6,1.61,3.61,3.59h0Z"/>
-                    <path class="cls-4" d="M821.22,116.37l-2.89-5.46c17.91-12.4,22.38-36.97,9.99-54.88-7.37-10.65-19.49-17-32.44-17h-41.65c-1.99,0-3.6,1.61-3.6,3.6v105.8c0,1.99,1.61,3.6,3.6,3.6h20.81c2.04,0,3.7-1.66,3.7-3.7v-30.56c0-.77.63-1.4,1.4-1.4h8.8c.52,0,1,.29,1.24.75l.23.43,17.21,32.51c.64,1.22,1.91,1.98,3.29,1.98h23.18c2,0,3.62-1.63,3.62-3.63,0-.59-.15-1.17-.42-1.69l-16.06-30.34ZM805.1,85.93c-2.59,4.22-7.18,6.79-12.13,6.78h-14.24v-28.46h14.9v.02c7.86.37,13.93,7.03,13.56,14.89-.11,2.4-.83,4.73-2.09,6.78h0Z"/>
-                    <path class="cls-4" d="M370.4,140.66c.53.99.24,2.22-.67,2.87-26.46,18.91-63.23,12.79-82.14-13.66-18.91-26.46-12.79-63.23,13.66-82.14,20.48-14.64,47.99-14.64,68.47,0,.91.66,1.19,1.88.67,2.88l-10.45,19.73c-.93,1.76-3.11,2.42-4.87,1.49-.2-.1-.38-.23-.55-.36-13.36-10.51-32.71-8.21-43.22,5.15-10.51,13.36-8.21,32.71,5.15,43.22,11.17,8.79,26.91,8.79,38.08,0,1.55-1.24,3.82-.99,5.06.57.14.17.26.36.37.56l10.44,19.73Z"/>
-                    <path class="cls-4" d="M487.03,64.97v18.73h37.96c1.99,0,3.6,1.61,3.6,3.6v16.46c0,1.99-1.61,3.6-3.6,3.6h-37.96v18.73h49.15c1.99,0,3.6,1.61,3.6,3.6v18.74c0,1.99-1.61,3.6-3.6,3.6h-73.66c-1.99,0-3.6-1.61-3.6-3.6V42.63c0-1.99,1.61-3.6,3.6-3.6h73.66c1.99,0,3.6,1.61,3.6,3.6v18.65c0,2.04-1.65,3.69-3.69,3.69h-49.06Z"/>
-                    <path class="cls-4" d="M691.37,64.97v18.73h37.96c1.99,0,3.6,1.61,3.6,3.6v16.46c0,1.99-1.61,3.6-3.6,3.6h-37.96v18.73h49.15c1.99,0,3.6,1.61,3.6,3.6v18.74c0,1.99-1.61,3.6-3.6,3.6h-73.66c-1.99,0-3.6-1.61-3.6-3.6V42.63c0-1.99,1.61-3.6,3.6-3.6h73.66c1.99,0,3.6,1.61,3.6,3.6v18.65c0,2.04-1.65,3.69-3.69,3.69h-49.06Z"/>
-                    <g class="cls-5"><path class="cls-4" fill="url(#Gradiente_sem_nome_10)" d="M656.55,42.1l-42.22,107.61c-.55,1.4-1.9,2.32-3.41,2.32h-18.86c-1.51,0-2.86-.92-3.41-2.32l-42.22-107.61c-.45-1.15.11-2.46,1.27-2.91.26-.1.54-.16.82-.16h24.31c1.54,0,2.92.96,3.45,2.41l25.21,69.57,15.99-44.09c.27-.74-.12-1.55-.85-1.82-.15-.06-.32-.08-.48-.08h-15.82c-1.24,0-2.25-1-2.25-2.25,0-.26.05-.52.13-.77l7.45-20.56c.53-1.45,1.9-2.41,3.44-2.41h45.35c1.24,0,2.25,1.01,2.25,2.25,0,.28-.05.56-.16.82"/></g>
-                    <path class="cls-4" d="M310.46,207.36c0,.24-.09.46-.27.62h-6.76c-.33,0-.66-.11-.92-.32l-1.57-4.57h-12.07l-1.55,4.55c-.09.33-.29.62-.57.82h-6.74c-.28.02-.55-.06-.77-.23l12.72-32.27c.14-.34.38-.64.68-.86h5.02c.34,0,.67.12.94.32l12.69,32.29c.07.17.11.36.12.55M297.1,195.31l-3.6-10.55-3.6,10.55h7.2Z"/>
-                    <path class="cls-4" d="M338.14,174.64c0-.34.13-.66.37-.89h10.81c3.16-.05,6.28.71,9.06,2.23,2.61,1.44,4.77,3.58,6.23,6.19,1.52,2.76,2.29,5.86,2.24,9.01.05,3.14-.72,6.23-2.24,8.98-1.46,2.6-3.61,4.74-6.23,6.17-2.78,1.51-5.9,2.27-9.06,2.21h-10.81c-.7,0-1.26-.56-1.26-1.26h0v-32.27ZM350.21,199.97c3.23.04,6.21-1.71,7.74-4.55.77-1.42,1.16-3.01,1.14-4.62.02-1.66-.37-3.3-1.14-4.76-1.5-2.87-4.5-4.65-7.74-4.59l-3.43.02v18.5h3.43Z"/>
-                    <path class="cls-4" d="M425.13,173.56c.18.15.28.38.26.62h0l-12.72,32.27c-.13.35-.36.65-.65.87-.27.21-.6.32-.94.32h-5.02c-.35,0-.68-.12-.95-.33l-12.67-32.29c-.07-.17-.11-.36-.12-.55,0-.23.09-.46.26-.61h0c.22-.16.49-.25.76-.23h6.76c.34,0,.67.11.94.32l7.55,21,7.67-21.05c.1-.34.31-.63.6-.83h6.76"/>
-                    <path class="cls-4" d="M452.9,174.64c-.02-.34.1-.68.33-.93h22.4c.34-.02.68.1.93.33v5.48c.02.34-.1.67-.32.93h-15.12v5.76h11.48c.37-.02.73.1,1.01.35v4.53c.02.35-.12.69-.37.93h-11.48v5.93h15.12c.47-.03.92.13,1.27.44v5.14c.02.34-.11.66-.35.9h-22.85c-.34.02-.67-.09-.93-.32v-32.29Z"/>
-                    <path class="cls-4" d="M534.29,207.26c0,.51-.4.92-.9.93h-7.12c-.29.02-.58-.06-.82-.23l-5.1-9.81h-3.55v9.62c.02.34-.11.68-.35.93h-6.1c-.34.02-.67-.1-.92-.33v-32.29c-.01-.34.11-.66.35-.9h12.22c2.26-.04,4.49.47,6.5,1.49,1.85.95,3.38,2.42,4.42,4.23,1.09,1.94,1.64,4.14,1.59,6.36.03,2.04-.46,4.06-1.42,5.86-.92,1.71-2.29,3.13-3.96,4.12l6.1,11.31M516.12,189.85h4.45c.77.01,1.52-.2,2.18-.6.64-.39,1.16-.95,1.51-1.62.37-.69.56-1.46.55-2.24.01-.76-.18-1.51-.55-2.18-.35-.63-.88-1.15-1.51-1.5h-4.45v8.67Z"/>
-                    <path class="cls-4" d="M561.13,174.64c-.02-.34.1-.68.33-.93h23.24c.34-.02.68.1.93.33v5.74c.02.35-.1.68-.33.94h-7.31v25.55c.02.35-.1.69-.33.94h-6.1c-.64.06-1.2-.4-1.26-1.04v-25.55h-7.29c-.34.02-.68-.1-.93-.35v-5.74Z"/>
-                    <path class="cls-4" d="M623.9,207.24c.07.44-.23.86-.68.93h-6.79c-.46.06-.87-.27-.93-.73v-32.94c-.06-.44.26-.85.7-.9h6.79c.44-.06.84.25.9.69v32.94Z"/>
-                    <path class="cls-4" d="M652.91,204.31c.01-.3.1-.6.26-.86l2.81-5.05c.2-.41.62-.67,1.07-.67.27.01.54.08.79.19,1.47.68,2.99,1.24,4.55,1.68,1.51.41,3.06.61,4.62.61,1.06.03,2.12-.21,3.06-.7.75-.34,1.24-1.07,1.25-1.89,0-.58-.25-1.13-.7-1.5-.6-.49-1.27-.86-2-1.12-.87-.33-2.09-.73-3.66-1.19-2.07-.58-4.08-1.36-6-2.34-1.43-.74-2.65-1.83-3.54-3.18-.87-1.47-1.29-3.15-1.22-4.86-.05-2.05.57-4.07,1.76-5.74,1.2-1.62,2.82-2.88,4.69-3.63,2.01-.83,4.17-1.25,6.35-1.23,1.47,0,2.94.17,4.37.5,1.37.3,2.71.73,4.01,1.26,1.03.42,2.02.93,2.95,1.52.41.21.68.62.71,1.07l-2.83,5.14c-.17.38-.56.62-.98.62-.37-.02-.73-.13-1.05-.31-1.18-.62-2.41-1.14-3.68-1.56-1.23-.37-2.51-.55-3.8-.54-.91-.02-1.81.2-2.6.64-.64.29-1.07.92-1.1,1.62,0,.7.47,1.3,1.41,1.8,1.45.69,2.97,1.25,4.53,1.65,2.14.6,4.22,1.37,6.24,2.3,1.52.71,2.84,1.79,3.83,3.14,1.03,1.52,1.53,3.33,1.45,5.16.04,2.1-.58,4.15-1.79,5.87-1.23,1.71-2.91,3.04-4.86,3.85-2.15.91-4.46,1.36-6.79,1.33-2.35,0-4.68-.31-6.95-.9-2.2-.56-4.31-1.43-6.26-2.6"/>
-                    <path class="cls-4" d="M717.37,207.24c.07.44-.23.86-.68.93h-6.79c-.46.06-.87-.27-.93-.73v-32.94c-.06-.44.26-.85.7-.9h6.79c.44-.06.84.24.9.68v32.94Z"/>
-                    <path class="cls-4" d="M778.6,173.61c.17.19.26.44.24.69v32.96c.02.26-.07.51-.25.69-.19.17-.43.25-.68.24h-6.48c-.75,0-1.45-.41-1.81-1.07l-13.38-20.36v20.5c.02.25-.07.51-.25.69-.19.17-.43.25-.68.24h-6.79c-.25.01-.49-.07-.68-.24v-32.95c-.02-.25.07-.51.25-.69h7.03c.75.04,1.42.46,1.79,1.12l12.88,19.15v-19.34c-.02-.25.07-.5.24-.69h6.79"/>
-                    <path class="cls-4" d="M827.49,200.03c.61-.16,1.2-.37,1.76-.66v-6.14c-.01-.34.12-.67.37-.91.24-.23.56-.36.89-.36h5.98c.32,0,.64.13.86.37v11.36c0,.26-.07.51-.19.74-.1.23-.27.42-.48.55-1.63.97-3.4,1.7-5.25,2.14-1.96.55-3.98.85-6.01.88-3.24.03-6.43-.79-9.24-2.4-2.75-1.56-5.04-3.82-6.63-6.55-1.63-2.77-2.47-5.93-2.44-9.15-.04-6.48,3.42-12.47,9.05-15.67,2.81-1.61,6-2.44,9.24-2.41,1.91.02,3.81.34,5.62.94,1.76.51,3.41,1.35,4.86,2.47.33.23.53.62.52,1.02l-3.5,5.26c-.19.32-.53.51-.91.5-.3,0-.59-.1-.81-.31-.78-.65-1.68-1.13-2.64-1.44-.93-.33-1.92-.5-2.91-.51-1.71-.02-3.39.42-4.88,1.26-1.45.82-2.66,2-3.5,3.44-1.71,2.96-1.71,6.61,0,9.57.84,1.44,2.05,2.62,3.5,3.44,1.49.84,3.17,1.28,4.88,1.26"/>
-                </g>
+            <svg viewBox="0 0 837.7 245.66" style="height: 45px; width: auto;">
+                <path fill="var(--color-header)" d="M452.05,129.69v18.74c0,1.99-1.61,3.6-3.6,3.6h-67.98c-1.99,0-3.6-1.61-3.6-3.6h0V42.63c0-1.99,1.61-3.6,3.6-3.6h20.9c1.99,0,3.6,1.61,3.6,3.6h0v83.46h43.47c1.99,0,3.6,1.61,3.61,3.59h0Z"/>
+                <path fill="var(--color-header)" d="M370.4,140.66c.53.99.24,2.22-.67,2.87-26.46,18.91-63.23,12.79-82.14-13.66-18.91-26.46-12.79-63.23,13.66-82.14,20.48-14.64,47.99-14.64,68.47,0,.91.66,1.19,1.88.67,2.88l-10.45,19.73c-.93,1.76-3.11,2.42-4.87,1.49-.2-.1-.38-.23-.55-.36-13.36-10.51-32.71-8.21-43.22,5.15-10.51,13.36-8.21,32.71,5.15,43.22,11.17,8.79,26.91,8.79,38.08,0,1.55-1.24,3.82-.99,5.06.57.14.17.26.36.37.56l10.44,19.73Z"/>
+                <rect x="560" y="40" width="100" height="100" fill="var(--color-accent)" rx="10" style="opacity:0.8"/>
             </svg>
         </div>
         
         <ul class="sidebar-menu">
-            <li><a data-view="dashboard" class="active"><i class="fas fa-columns"></i> Dashboard N1</a></li>
-            <li><a data-view="performance"><i class="fas fa-chart-pie"></i> Performance N1</a></li>
-            <li><a data-view="n2"><i class="fas fa-layer-group"></i> Performance N2</a></li>
-            <li><a data-view="n3"><i class="fas fa-layer-group"></i> Performance N3</a></li>
-            <li><a data-view="history"><i class="fas fa-history"></i> Histórico</a></li>
-            <li><a data-view="teams"><i class="fas fa-users"></i> Equipas</a></li>
+            <li><a href="#" class="active"><i class="fas fa-chart-pie"></i> Dashboard N1</a></li>
+            <li><a href="#"><i class="fas fa-list"></i> Detalhes de Chamados</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> Configurações</a></li>
         </ul>
 
         <div class="theme-toggle-container">
@@ -271,325 +360,256 @@
     <main class="main-content">
         <header>
             <div>
-                <h1>Clever Advertising <span class="highlight">Dashboard</span></h1>
-                <p style="color: var(--color-text-muted);">Análise de Tempo Médio de Atendimento (SLA) - 2024 & 2025</p>
+                <h1>Análise de <span style="color: var(--color-accent);">Performance N1</span></h1>
+                <p style="color: var(--color-text-muted);">Tempo Médio de Atendimento por Categoria Fechada (2024 - 2025)</p>
             </div>
             <div>
-                <button class="btn"><i class="fas fa-download"></i> Exportar Relatório</button>
+                <button class="btn"><i class="fas fa-file-export"></i> Exportar PDF</button>
             </div>
         </header>
 
-        <div id="view-dashboard" class="view-section active">
-            <section class="cards-grid">
-                <div class="card">
-                    <div class="card-title">Média Global N1</div>
-                    <div class="card-value" id="kpi-global">--</div>
-                    <div class="card-trend">Horas Totais (Avg)</div>
-                </div>
-                <div class="card">
-                    <div class="card-title">Média Global N2</div>
-                    <div class="card-value" id="kpi-global-n2">--</div>
-                    <div class="card-trend">Horas Totais (Avg)</div>
-                </div>
-                <div class="card">
-                    <div class="card-title">Média Global N3</div>
-                    <div class="card-value" id="kpi-global-n3">--</div>
-                    <div class="card-trend">Horas Totais (Avg)</div>
-                </div>
-                <div class="card">
-                    <div class="card-title">Categorias N1</div>
-                    <div class="card-value" id="kpi-count">--</div>
-                    <div class="card-trend">Monitorizadas</div>
-                </div>
-            </section>
+        <section class="cards-grid">
+            <div class="card">
+                <div class="card-title">Média Global N1</div>
+                <div class="card-value" id="kpi-global">--</div>
+                <div class="card-trend">Horas Totais</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Maior Tempo Médio</div>
+                <div class="card-value trend-bad" id="kpi-slowest-val">--</div>
+                <div class="card-trend" id="kpi-slowest-name">Categoria</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Menor Tempo Médio</div>
+                <div class="card-value trend-good" id="kpi-fastest-val">--</div>
+                <div class="card-trend" id="kpi-fastest-name">Categoria</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Categorias Analisadas</div>
+                <div class="card-value" id="kpi-count">--</div>
+                <div class="card-trend">Ativas</div>
+            </div>
+        </section>
+
+        <section class="charts-grid">
             <div class="chart-container">
-                <h2>Evolução Top 5 (Mais Lentas N1)</h2>
+                <h2>Evolução (Top 5 Mais Lentas)</h2>
                 <canvas id="trendChart"></canvas>
             </div>
-        </div>
-
-        <div id="view-performance" class="view-section">
-            <div class="chart-container" style="height: 600px;">
-                <h2>Ranking Global N1</h2>
+            <div class="chart-container">
+                <h2>Ranking N1 (Global)</h2>
                 <canvas id="barChart"></canvas>
             </div>
-        </div>
+        </section>
 
-        <div id="view-n2" class="view-section">
-            <div class="chart-container" style="height: 600px;">
-                <h2>Ranking Global N2</h2>
-                <canvas id="barChartN2"></canvas>
+        <section class="table-container">
+            <h2>Detalhamento Trimestral</h2>
+            <div style="overflow-x:auto; margin-top: 15px;">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Área</th>
+                            <th>Média N1</th>
+                            <th>Q1 '24</th>
+                            <th>Q2 '24</th>
+                            <th>Q3 '24</th>
+                            <th>Q4 '24</th>
+                            <th>Q1 '25</th>
+                            <th>Q2 '25</th>
+                            <th>Q3 '25</th>
+                            <th>Q4 '25</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
             </div>
-            <div class="table-container" style="margin-top:20px;">
-                 <h2>Detalhes N2</h2>
-                 <table id="tableN2">
-                     <thead>
-                         <tr>
-                             <th>Categoria</th><th>Área</th><th>Média N2</th>
-                             <th>Q1 '24</th><th>Q2 '24</th><th>Q3 '24</th><th>Q4 '24</th>
-                             <th>Q1 '25</th><th>Q2 '25</th><th>Q3 '25</th><th>Q4 '25</th>
-                         </tr>
-                     </thead>
-                     <tbody></tbody>
-                 </table>
-            </div>
-        </div>
-
-        <div id="view-n3" class="view-section">
-            <div class="chart-container" style="height: 600px;">
-                <h2>Ranking Global N3</h2>
-                <canvas id="barChartN3"></canvas>
-            </div>
-            <div class="table-container" style="margin-top:20px;">
-                 <h2>Detalhes N3</h2>
-                 <table id="tableN3">
-                     <thead>
-                         <tr>
-                             <th>Categoria</th><th>Área</th><th>Média N3</th>
-                             <th>Q1 '24</th><th>Q2 '24</th><th>Q3 '24</th><th>Q4 '24</th>
-                             <th>Q1 '25</th><th>Q2 '25</th><th>Q3 '25</th><th>Q4 '25</th>
-                         </tr>
-                     </thead>
-                     <tbody></tbody>
-                 </table>
-            </div>
-        </div>
-
-        <div id="view-history" class="view-section">
-            <section class="table-container">
-                <h2>Histórico N1 (Detalhado)</h2>
-                <div style="overflow-x:auto; margin-top: 15px;">
-                    <table id="dataTable">
-                        <thead>
-                            <tr>
-                                <th>Categoria</th><th>Área</th><th>Média N1</th>
-                                <th>Q1 '24</th><th>Q2 '24</th><th>Q3 '24</th><th>Q4 '24</th>
-                                <th>Q1 '25</th><th>Q2 '25</th><th>Q3 '25</th><th>Q4 '25</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-
-        <div id="view-teams" class="view-section">
-            <div class="chart-container">
-                <h2>Performance Média por Área (N1)</h2>
-                <canvas id="teamsChart"></canvas>
-            </div>
-        </div>
-
+        </section>
     </main>
 
     <script>
-        // --- DADOS N1 ---
-        const n1Data = [
-            {"Category": "Access", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.01, "Q1_2025": 0.0, "Q2_2025": 16.65, "Q3_2025": 12.66, "Q4_2025": 17.71, "Average_N1": 15.68, "Area": "Infra"},
-            {"Category": "Acessories / Notebook", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 342.59, "Q2_2025": 21.78, "Q3_2025": 68.82, "Q4_2025": 10.58, "Average_N1": 110.94, "Area": "Infra"},
-            {"Category": "Advertising", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.12, "Q3_2025": 1.79, "Q4_2025": 0.0, "Average_N1": 0.97, "Area": "Service"},
-            {"Category": "CleverAds", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.52, "Q3_2025": 0.51, "Q4_2025": 0.0, "Average_N1": 0.34, "Area": "Service"},
-            {"Category": "Traffic", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.96, "Q3_2025": 1.59, "Q4_2025": 0.0, "Average_N1": 1.18, "Area": "Service"},
-            {"Category": "Implementation", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 2.16, "Q3_2025": 1.67, "Q4_2025": 0.0, "Average_N1": 1.28, "Area": "Service"},
-            {"Category": "Resolution AUTO", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 66.67, "Q4_2025": 1.86, "Average_N1": 22.84, "Area": "Service"},
-            {"Category": "Jira /Confluence", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.23, "Q3_2025": 0.25, "Q4_2025": 0.0, "Average_N1": 0.16, "Area": "Service"},
-            {"Category": "PowerBI", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 6.11, "Q3_2025": 66.17, "Q4_2025": 0.0, "Average_N1": 24.09, "Area": "Service"},
-            {"Category": "Network", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.21, "Q3_2025": 1.80, "Q4_2025": 0.0, "Average_N1": 1.00, "Area": "Infra"},
-            {"Category": "Printer", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 2.05, "Q4_2025": 0.0, "Average_N1": 0.68, "Area": "Infra"},
-            {"Category": "B2B / Approvals / Commission", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 5.32, "Q3_2025": 0.60, "Q4_2025": 0.0, "Average_N1": 1.97, "Area": "Core"},
-            {"Category": "Antivirus", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.17, "Q3_2025": 0.29, "Q4_2025": 0.0, "Average_N1": 0.15, "Area": "Infra"},
-            {"Category": "Improvement", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 485.77, "Q4_2025": 193.79, "Average_N1": 339.78, "Area": "Service"},
-            {"Category": "RPA", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 28.06, "Q3_2025": 78.97, "Q4_2025": 0.0, "Average_N1": 53.52, "Area": "Delivery"},
-            {"Category": "Biometric Control", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 54.94, "Q3_2025": 33.97, "Q4_2025": 31.51, "Average_N1": 40.14, "Area": "Corporate"},
-            {"Category": "New Services", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 2.05, "Q3_2025": 2.31, "Q4_2025": 0.0, "Average_N1": 1.45, "Area": "Core"},
-            {"Category": "New Solution Request", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 5.81, "Q3_2025": 5.26, "Q4_2025": 16.91, "Average_N1": 9.33, "Area": "Service"},
-            {"Category": "Data Base", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 2.17, "Q4_2025": 0.0, "Average_N1": 0.72, "Area": "Infra"},
-            {"Category": "Information Security", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 0.28, "Q4_2025": 0.0, "Average_N1": 0.09, "Area": "Infra"}
-        ];
+        // --- DADOS PROCESSADOS (JSON) ---
+        // Estes dados foram extraídos do teu ficheiro CSV N1 - SLO
+        const detailsData = [{"Category": "Access", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.01, "Q1_2025": 0.0, "Q2_2025": 16.654015748031494, "Q3_2025": 12.665436046511628, "Q4_2025": 17.71333333333333, "Average_N1": 15.680928375958819, "Area": "Infra"}, {"Category": "Acessories / Notebook", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 342.59, "Q2_2025": 21.778679245283019, "Q3_2025": 68.81973684210527, "Q4_2025": 10.5775, "Average_N1": 110.94147902184706, "Area": "Infra"}, {"Category": "Advertising", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.1239473684210526, "Q3_2025": 1.7875675675675676, "Q4_2025": 0.0, "Average_N1": 0.9705049808045977, "Area": "Service"}, {"Category": "CleverAds", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.52, "Q3_2025": 0.5067647058823529, "Q4_2025": 0.0, "Average_N1": 0.34225490196078435, "Area": "Service"}, {"Category": "Traffic", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.96, "Q3_2025": 1.5925, "Q4_2025": 0.0, "Average_N1": 1.1841666666666668, "Area": "Service"}, {"Category": "Implementation", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 2.165, "Q3_2025": 1.6668421052631579, "Q4_2025": 0.0, "Average_N1": 1.277280701754386, "Area": "Service"}, {"Category": "Resolution AUTO", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 66.67, "Q4_2025": 1.8633333333333333, "Average_N1": 22.844444444444445, "Area": "Service"}, {"Category": "Jira /Confluence", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.22727272727272727, "Q3_2025": 0.25, "Q4_2025": 0.0, "Average_N1": 0.1590909090909091, "Area": "Service"}, {"Category": "PowerBI", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 6.113333333333333, "Q3_2025": 66.166875, "Q4_2025": 0.0, "Average_N1": 24.09340277777778, "Area": "Service"}, {"Category": "Network", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.207, "Q3_2025": 1.7966666666666666, "Q4_2025": 0.0, "Average_N1": 1.0012222222222221, "Area": "Infra"}, {"Category": "Printer", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 2.05, "Q4_2025": 0.0, "Average_N1": 0.6833333333333333, "Area": "Infra"}, {"Category": "B2B / Approvals / Commission / Bold", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 5.322222222222222, "Q3_2025": 0.598, "Q4_2025": 0.0, "Average_N1": 1.9734074074074073, "Area": "Core"}, {"Category": "Antivirus", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.17, "Q3_2025": 0.2933333333333333, "Q4_2025": 0.0, "Average_N1": 0.15444444444444444, "Area": "Infra"}, {"Category": "Creatives", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.45, "Q3_2025": 0.0, "Q4_2025": 0.0, "Average_N1": 0.4833333333333333, "Area": "Service"}, {"Category": "C2P", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.6585714285714285, "Q3_2025": 2.657058823529412, "Q4_2025": 0.0, "Average_N1": 1.4385434173669467, "Area": "Core"}, {"Category": "Improvement", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 485.77, "Q4_2025": 193.79, "Average_N1": 339.78, "Area": "Service"}, {"Category": "RPA", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 28.06, "Q3_2025": 78.97, "Q4_2025": 0.0, "Average_N1": 53.515, "Area": "Delivery"}, {"Category": "Biometric Control", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 54.9425, "Q3_2025": 33.965833333333336, "Q4_2025": 31.51, "Average_N1": 40.13944444444445, "Area": "Corporate"}, {"Category": "New Services", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 2.045, "Q3_2025": 2.31, "Q4_2025": 0.0, "Average_N1": 1.4516666666666667, "Area": "Core"}, {"Category": "New Solution Request", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 5.805, "Q3_2025": 5.26, "Q4_2025": 16.91, "Average_N1": 9.325, "Area": "Service"}, {"Category": "Data Base", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 2.17, "Q4_2025": 0.0, "Average_N1": 0.7233333333333334, "Area": "Infra"}, {"Category": "Information Security", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 0.28, "Q4_2025": 0.0, "Average_N1": 0.09333333333333334, "Area": "Infra"}];
+        const summaryData = [{"Category": "All Close Categories", "Q1_2024": 5.004256329113924, "Q2_2024": 10.188636363636364, "Q3_2024": 19.925573997233748, "Q4_2024": 37.872317224287485, "Q1_2025": 18.288285144566302, "Q2_2025": 11.565137880986939, "Q3_2025": 25.434093198992443, "Q4_2025": 19.279545454545453, "Average_N1": 49.185948531120886, "Area": null}, {"Category": "(none)", "Q1_2024": 5.004256329113924, "Q2_2024": 10.188636363636364, "Q3_2024": 19.925573997233748, "Q4_2024": 37.91929280397022, "Q1_2025": 17.964630738522956, "Q2_2025": 11.164735516372795, "Q3_2025": 65.90125, "Q4_2025": 0.17, "Average_N1": 56.079458582950004, "Area": null}];
+        const top5Data = [{"Category": "Improvement", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 485.77, "Q4_2025": 193.79, "Average_N1": 339.78, "Area": "Service"}, {"Category": "Acessories / Notebook", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 342.59, "Q2_2025": 21.778679245283019, "Q3_2025": 68.81973684210527, "Q4_2025": 10.5775, "Average_N1": 110.94147902184706, "Area": "Infra"}, {"Category": "RPA", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 28.06, "Q3_2025": 78.97, "Q4_2025": 0.0, "Average_N1": 53.515, "Area": "Delivery"}, {"Category": "Biometric Control", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 54.9425, "Q3_2025": 33.965833333333336, "Q4_2025": 31.51, "Average_N1": 40.13944444444445, "Area": "Corporate"}, {"Category": "PowerBI", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 6.113333333333333, "Q3_2025": 66.166875, "Q4_2025": 0.0, "Average_N1": 24.09340277777778, "Area": "Service"}];
 
-        // --- DADOS N2 (INJETADOS) ---
-        const n2Data = [
-            {"Category": "Creatives", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 6.11, "Q3_2025": 5.1, "Q4_2025": 0.0, "Total": 11.21, "Average_N2": 3.74, "Area": "Service"},
-            {"Category": "Advertising", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 4.43, "Q3_2025": 4.91, "Q4_2025": 12.98, "Total": 22.32, "Average_N2": 7.44, "Area": "Service"},
-            {"Category": "CleverAds", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.59, "Q2_2025": 69.96, "Q3_2025": 30.42, "Q4_2025": 46.47, "Total": 147.45, "Average_N2": 49.15, "Area": "Service"},
-            {"Category": "Implementation", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 1.24, "Q2_2025": 1.34, "Q3_2025": 43.03, "Q4_2025": 0.0, "Total": 45.61, "Average_N2": 15.2, "Area": "Service"},
-            {"Category": "RPA", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 28.06, "Q3_2025": 78.97, "Q4_2025": 0.0, "Total": 107.03, "Average_N2": 35.68, "Area": "Delivery"},
-            {"Category": "Access", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 2.76, "Q3_2025": 13.95, "Q4_2025": 3.56, "Total": 20.27, "Average_N2": 6.76, "Area": "Infra"},
-            {"Category": "Traffic", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 1.42, "Q2_2025": 2.3, "Q3_2025": 25.87, "Q4_2025": 3.73, "Total": 33.32, "Average_N2": 8.33, "Area": "Service"},
-            {"Category": "Jira /Confluence", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.67, "Q3_2025": 23.21, "Q4_2025": 0.0, "Total": 23.88, "Average_N2": 7.96, "Area": "Service"},
-            {"Category": "New Services", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 55.17, "Q3_2025": 0.53, "Q4_2025": 0.0, "Total": 55.7, "Average_N2": 27.85, "Area": "Core"},
-            {"Category": "Acessories / Notebook", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 3.83, "Q2_2025": 22.49, "Q3_2025": 6.09, "Q4_2025": 7.78, "Total": 40.19, "Average_N2": 10.05, "Area": "Infra"},
-            {"Category": "Network", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 16.61, "Q2_2025": 117.54, "Q3_2025": 0.68, "Q4_2025": 13.57, "Total": 148.4, "Average_N2": 37.1, "Area": "Infra"},
-            {"Category": "New Solution Request", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 1.96, "Q2_2025": 17.33, "Q3_2025": 134.87, "Q4_2025": 0.0, "Total": 154.16, "Average_N2": 51.39, "Area": "Service"},
-            {"Category": "B2B / Approvals / Commission", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.4, "Q3_2025": 0.74, "Q4_2025": 0.0, "Total": 1.14, "Average_N2": 0.38, "Area": "Core"},
-            {"Category": "Resolution AUTO", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 2.98, "Q4_2025": 0.0, "Total": 2.98, "Average_N2": 2.98, "Area": "Service"},
-            {"Category": "Biometric Control", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 34.59, "Q4_2025": 0.0, "Total": 34.59, "Average_N2": 34.59, "Area": "Corporate"},
-            {"Category": "PowerBI", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 98.21, "Q2_2025": 0.0, "Q3_2025": 17.08, "Q4_2025": 0.0, "Total": 115.29, "Average_N2": 57.64, "Area": "Service"},
-            {"Category": "Improvement", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 3.68, "Q4_2025": 27.41, "Total": 31.09, "Average_N2": 15.54, "Area": "Service"},
-            {"Category": "Antivirus", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 20.49, "Q4_2025": 0.0, "Total": 20.49, "Average_N2": 20.49, "Area": "Infra"},
-            {"Category": "Printer", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 2.53, "Q4_2025": 0.0, "Total": 2.53, "Average_N2": 2.53, "Area": "Infra"}
-        ];
+        // --- LOGICA JS ---
 
-        // --- DADOS N3 (INJETADOS) ---
-        const n3Data = [
-            {"Category": "Access", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 3.23, "Q2_2025": 40.16, "Q3_2025": 21.71, "Q4_2025": 0.0, "Total": 65.1, "Average_N3": 21.7, "Area": "Infra"},
-            {"Category": "Network", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 24.09, "Q4_2025": 0.0, "Total": 24.09, "Average_N3": 24.09, "Area": "Infra"},
-            {"Category": "Traffic", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 2.94, "Q3_2025": 24.38, "Q4_2025": 0.0, "Total": 27.32, "Average_N3": 13.66, "Area": "Service"},
-            {"Category": "B2B / Approvals / Commission", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 15.98, "Q4_2025": 0.0, "Total": 15.98, "Average_N3": 7.99, "Area": "Core"},
-            {"Category": "Advertising", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 8.8, "Q4_2025": 94.61, "Total": 103.41, "Average_N3": 51.71, "Area": "Core"},
-            {"Category": "Acessories / Notebook", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 31.73, "Q4_2025": 115.16, "Total": 146.89, "Average_N3": 73.45, "Area": "Infra"},
-            {"Category": "Jira /Confluence", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 63.8, "Q4_2025": 23.21, "Total": 87.01, "Average_N3": 43.51, "Area": "Service"},
-            {"Category": "CleverAds", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 208.9, "Q4_2025": 34.59, "Total": 243.49, "Average_N3": 30.44, "Area": "Corporate"},
-            {"Category": "New Solution Request", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 41.22, "Q4_2025": 170.75, "Total": 211.97, "Average_N3": 105.99, "Area": "Service"},
-            {"Category": "PowerBI", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 341.01, "Q4_2025": 57.98, "Total": 398.99, "Average_N3": 199.5, "Area": "Service"},
-            {"Category": "Implementation", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 33.08, "Q4_2025": 0.0, "Total": 33.08, "Average_N3": 33.08, "Area": "Service"},
-            {"Category": "Data Base", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 0.0, "Q4_2025": 2.01, "Total": 2.01, "Average_N3": 2.01, "Area": "Infra"},
-            {"Category": "RPA", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 153.55, "Q4_2025": 26.51, "Total": 180.06, "Average_N3": 90.03, "Area": "Delivery"},
-            {"Category": "Resolution AUTO", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 27.42, "Q4_2025": 0.0, "Total": 27.42, "Average_N3": 27.42, "Area": "Service"},
-            {"Category": "Improvement", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 0.0, "Q4_2025": 115.09, "Total": 115.09, "Average_N3": 115.09, "Area": "Service"}
-        ];
-
-        const summaryData = {"Average_N1": 49.19, "Average_N2": 41.22, "Average_N3": 61.23};
-        const top5DataN1 = n1Data.sort((a,b)=>b.Average_N1 - a.Average_N1).slice(0,5);
-
-        // --- APP LOGIC ---
         const themeSwitch = document.getElementById('theme-switch');
         const body = document.body;
-        let charts = {};
+        let trendChartInstance = null;
+        let barChartInstance = null;
 
+        // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
-            setupNavigation();
             populateCards();
             initCharts();
-            initTable('dataTable', n1Data, 'Average_N1');
-            initTable('tableN2', n2Data, 'Average_N2');
-            initTable('tableN3', n3Data, 'Average_N3');
-            initTeamsView();
+            initTable();
         });
 
-        function setupNavigation() {
-            const links = document.querySelectorAll('.sidebar-menu a');
-            const views = document.querySelectorAll('.view-section');
-            links.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    links.forEach(l => l.classList.remove('active'));
-                    views.forEach(v => v.classList.remove('active'));
-                    link.classList.add('active');
-                    document.getElementById(`view-${link.dataset.view}`).classList.add('active');
-                });
-            });
-        }
-
+        // 1. Alternância de Tema
         themeSwitch.addEventListener('change', () => {
-            body.setAttribute('data-theme', themeSwitch.checked ? 'dark' : 'light');
-            updateChartsTheme(themeSwitch.checked);
+            if (themeSwitch.checked) {
+                body.setAttribute('data-theme', 'dark');
+                updateChartsTheme(true);
+            } else {
+                body.setAttribute('data-theme', 'light');
+                updateChartsTheme(false);
+            }
         });
 
+        // 2. Popular Cards
         function populateCards() {
-            document.getElementById('kpi-global').innerText = summaryData.Average_N1 + 'h';
-            document.getElementById('kpi-global-n2').innerText = summaryData.Average_N2 + 'h';
-            document.getElementById('kpi-global-n3').innerText = summaryData.Average_N3 + 'h';
-            document.getElementById('kpi-count').innerText = n1Data.length;
+            // Média Global
+            const global = summaryData.find(d => d.Category === 'All Close Categories');
+            if(global) {
+                document.getElementById('kpi-global').innerText = parseFloat(global.Average_N1).toFixed(2) + 'h';
+            }
+
+            // Ordenar para encontrar extremos
+            const sorted = [...detailsData].sort((a, b) => b.Average_N1 - a.Average_N1);
+            const slowest = sorted[0];
+            
+            // Filtrar zeros para encontrar o "mais rápido" que seja válido
+            const validData = sorted.filter(d => d.Average_N1 > 0.01);
+            const fastest = validData[validData.length - 1];
+
+            if(slowest) {
+                document.getElementById('kpi-slowest-val').innerText = parseFloat(slowest.Average_N1).toFixed(1) + 'h';
+                document.getElementById('kpi-slowest-name').innerText = slowest.Category;
+            }
+            if(fastest) {
+                document.getElementById('kpi-fastest-val').innerText = parseFloat(fastest.Average_N1).toFixed(1) + 'h';
+                document.getElementById('kpi-fastest-name').innerText = fastest.Category;
+            }
+            
+            document.getElementById('kpi-count').innerText = detailsData.length;
         }
 
+        // 3. Inicializar Gráficos
         function initCharts() {
-            // Trend N1
             const ctxTrend = document.getElementById('trendChart').getContext('2d');
-            const quarters = ['Q1 24','Q2 24','Q3 24','Q4 24','Q1 25','Q2 25','Q3 25','Q4 25'];
-            const colors = ['#231372', '#20E2C8', '#6106AF', '#E74C3C', '#F39C12'];
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+
+            // Chart 1: Tendência (Top 5)
+            const quarters = ['Q1_2024', 'Q2_2024', 'Q3_2024', 'Q4_2024', 'Q1_2025', 'Q2_2025', 'Q3_2025', 'Q4_2025'];
+            const quarterLabels = ['Q1 24', 'Q2 24', 'Q3 24', 'Q4 24', 'Q1 25', 'Q2 25', 'Q3 25', 'Q4 25'];
             
-            charts.trend = new Chart(ctxTrend, {
+            // Cores do Design System para as linhas
+            const lineColors = ['#231372', '#20E2C8', '#6106AF', '#E74C3C', '#F39C12'];
+
+            const datasetsTrend = top5Data.map((item, index) => {
+                return {
+                    label: item.Category,
+                    data: quarters.map(q => item[q]),
+                    borderColor: lineColors[index % lineColors.length],
+                    backgroundColor: lineColors[index % lineColors.length],
+                    tension: 0.3,
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    fill: false
+                };
+            });
+
+            trendChartInstance = new Chart(ctxTrend, {
                 type: 'line',
                 data: {
-                    labels: quarters,
-                    datasets: top5DataN1.map((d,i) => ({
-                        label: d.Category,
-                        data: [d.Q1_2024, d.Q2_2024, d.Q3_2024, d.Q4_2024, d.Q1_2025, d.Q2_2025, d.Q3_2025, d.Q4_2025],
-                        borderColor: colors[i%5],
-                        backgroundColor: colors[i%5],
-                        tension: 0.3,
-                        fill: false
-                    }))
+                    labels: quarterLabels,
+                    datasets: datasetsTrend
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position:'bottom' } }, scales: { x:{grid:{display:false}} } }
-            });
-
-            // Bar Charts Helper
-            const createBarChart = (id, data, key) => {
-                const sorted = [...data].sort((a,b)=>b[key]-a[key]);
-                return new Chart(document.getElementById(id).getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: sorted.map(d => d.Category),
-                        datasets: [{
-                            label: 'Média (Horas)',
-                            data: sorted.map(d => d[key]),
-                            backgroundColor: '#20E2C8',
-                            borderRadius: 4
-                        }]
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
                     },
-                    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}} }
-                });
-            };
-
-            charts.barN1 = createBarChart('barChart', n1Data, 'Average_N1');
-            charts.barN2 = createBarChart('barChartN2', n2Data, 'Average_N2');
-            charts.barN3 = createBarChart('barChartN3', n3Data, 'Average_N3');
-        }
-
-        function initTeamsView() {
-            const ctx = document.getElementById('teamsChart').getContext('2d');
-            const teamsData = {}; const counts = {};
-            n1Data.forEach(d => {
-                if(!teamsData[d.Area]) { teamsData[d.Area]=0; counts[d.Area]=0; }
-                teamsData[d.Area] += d.Average_N1; counts[d.Area]++;
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Horas' },
+                            grid: { color: '#e0e0e0' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
             });
-            const labels = Object.keys(teamsData);
-            const values = labels.map(l => (teamsData[l]/counts[l]).toFixed(2));
+
+            // Chart 2: Barra (Top 10 por espaço)
+            const sortedData = [...detailsData].sort((a, b) => b.Average_N1 - a.Average_N1).slice(0, 10);
             
-            charts.teams = new Chart(ctx, {
+            barChartInstance = new Chart(ctxBar, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: sortedData.map(d => d.Category),
                     datasets: [{
-                        label: 'Média por Área',
-                        data: values,
-                        backgroundColor: ['#231372','#20E2C8','#6106AF','#E74C3C'],
-                        borderRadius: 6
+                        label: 'Média N1 (Horas)',
+                        data: sortedData.map(d => d.Average_N1),
+                        backgroundColor: '#20E2C8',
+                        borderRadius: 4
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { x:{grid:{display:false}} } }
-            });
-        }
-
-        function updateChartsTheme(isDark) {
-            const color = isDark ? '#fff' : '#24282A';
-            const grid = isDark ? '#2c3036' : '#e0e0e0';
-            Object.values(charts).forEach(c => {
-                if(c) {
-                    c.options.scales.x.ticks.color = color;
-                    c.options.scales.y.ticks.color = color;
-                    if(c.options.scales.x.grid) c.options.scales.x.grid.color = grid;
-                    if(c.options.scales.y.grid) c.options.scales.y.grid.color = grid;
-                    if(c.options.plugins.legend) c.options.plugins.legend.labels.color = color;
-                    c.update();
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: '#e0e0e0' } },
+                        y: { grid: { display: false } }
+                    }
                 }
             });
         }
 
-        function initTable(id, data, avgKey) {
-            const tbody = document.querySelector(`#${id} tbody`);
+        // Atualizar cores dos gráficos no Dark Mode
+        function updateChartsTheme(isDark) {
+            const textColor = isDark ? '#ecf0f1' : '#24282A';
+            const gridColor = isDark ? '#2c3036' : '#e0e0e0';
+
+            [trendChartInstance, barChartInstance].forEach(chart => {
+                if(chart) {
+                    chart.options.scales.x.ticks.color = textColor;
+                    chart.options.scales.y.ticks.color = textColor;
+                    
+                    if(chart.options.scales.x.grid) chart.options.scales.x.grid.color = gridColor;
+                    if(chart.options.scales.y.grid) chart.options.scales.y.grid.color = gridColor;
+                    
+                    if(chart.options.plugins.legend) chart.options.plugins.legend.labels.color = textColor;
+                    
+                    chart.update();
+                }
+            });
+        }
+
+        // 4. Popular Tabela
+        function initTable() {
+            const tbody = document.querySelector('#dataTable tbody');
             let html = '';
-            data.forEach(r => {
+            
+            detailsData.forEach(row => {
                 html += `<tr>
-                    <td style="font-weight:600; color: var(--color-header);">${r.Category}</td>
-                    <td>${r.Area || '-'}</td>
-                    <td><span class="badge-avg">${r[avgKey]} h</span></td>
-                    <td>${r.Q1_2024}</td><td>${r.Q2_2024}</td><td>${r.Q3_2024}</td><td>${r.Q4_2024}</td>
-                    <td>${r.Q1_2025}</td><td>${r.Q2_2025}</td><td>${r.Q3_2025}</td><td>${r.Q4_2025}</td>
+                    <td style="font-weight:600; color: var(--color-header);">${row.Category}</td>
+                    <td><span style="font-size:0.8em; opacity:0.7;">${row.Area || '-'}</span></td>
+                    <td><span class="badge-avg">${parseFloat(row.Average_N1).toFixed(2)} h</span></td>
+                    <td>${parseFloat(row.Q1_2024).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q2_2024).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q3_2024).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q4_2024).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q1_2025).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q2_2025).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q3_2025).toFixed(1)}</td>
+                    <td>${parseFloat(row.Q4_2025).toFixed(1)}</td>
                 </tr>`;
             });
+            
             tbody.innerHTML = html;
         }
     </script>
