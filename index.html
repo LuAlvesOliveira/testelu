@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clever Advertising - Dashboard SLA</title>
+    <title>Clever Advertising - Executive Dashboard</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* --- DESIGN SYSTEM --- */
+        /* --- Design System --- */
         :root {
             --color-bg: #f4f4f4;
             --color-card-bg: #ffffff;
@@ -23,12 +24,13 @@
             --color-accent: #20E2C8;
             --color-sidebar: #ffffff;
             --color-border: #e0e0e0;
-            --color-table-head: rgba(35, 19, 114, 0.05);
+            --color-table-header: rgba(35, 19, 114, 0.05);
             
             --font-text: 'Figtree', sans-serif;
             --font-header: 'Barlow', sans-serif;
             
-            --sidebar-width: 260px;
+            --sidebar-width: 280px; 
+            --transition-speed: 0.3s;
         }
 
         [data-theme="dark"] {
@@ -39,21 +41,23 @@
             --color-header: #ffffff;
             --color-sidebar: #1e2228;
             --color-border: #2c3036;
-            --color-table-head: rgba(255,255,255,0.05);
+            --color-table-header: rgba(255,255,255,0.05);
         }
 
-        /* Reset */
         * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
             background-color: var(--color-bg);
             font-family: var(--font-text);
             color: var(--color-text);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
             display: flex;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* --- SIDEBAR --- */
+        /* --- Sidebar --- */
         .sidebar {
             width: var(--sidebar-width);
             background-color: var(--color-sidebar);
@@ -62,65 +66,59 @@
             flex-direction: column;
             position: fixed;
             height: 100vh;
-            z-index: 1000; /* Garante que fica acima de tudo */
-            top: 0; left: 0;
+            z-index: 100;
         }
 
         .sidebar-header {
             padding: 30px 20px;
+            background-color: var(--color-sidebar);
             border-bottom: 1px solid var(--color-border);
-            text-align: center;
         }
         
         .sidebar-header svg {
             width: 100%;
             height: auto;
-            max-height: 60px;
+            max-height: 80px;
+            display: block;
         }
         
-        /* Fix SVG Dark Mode */
         [data-theme="dark"] .cls-4 { fill: #ffffff !important; }
 
         .sidebar-menu {
             list-style: none;
-            padding: 20px 10px;
+            padding: 20px 15px;
             flex-grow: 1;
             overflow-y: auto;
         }
 
-        .sidebar-menu li { margin-bottom: 5px; }
+        .sidebar-menu li { margin-bottom: 8px; }
 
-        .sidebar-menu button {
-            width: 100%;
+        .sidebar-menu a {
             display: flex;
             align-items: center;
             padding: 12px 15px;
-            background: none;
-            border: none;
             text-decoration: none;
             color: var(--color-text-muted);
             border-radius: 8px;
             transition: all 0.2s;
-            font-family: var(--font-text);
             font-weight: 600;
-            font-size: 0.95rem;
             cursor: pointer;
-            text-align: left;
+            font-size: 0.95rem;
         }
 
-        .sidebar-menu button:hover, .sidebar-menu button.active {
+        .sidebar-menu a:hover, .sidebar-menu a.active {
             background-color: rgba(32, 226, 200, 0.15);
             color: var(--color-header); 
         }
         
-        [data-theme="dark"] .sidebar-menu button:hover, 
-        [data-theme="dark"] .sidebar-menu button.active {
+        [data-theme="dark"] .sidebar-menu a:hover, 
+        [data-theme="dark"] .sidebar-menu a.active {
              color: var(--color-accent);
         }
 
-        .sidebar-menu i { margin-right: 15px; width: 20px; text-align: center; font-size: 1.1em; }
+        .sidebar-menu i { margin-right: 15px; width: 20px; text-align: center; }
 
-        /* --- MAIN CONTENT --- */
+        /* --- Main Content --- */
         .main-content {
             margin-left: var(--sidebar-width);
             flex-grow: 1;
@@ -135,39 +133,25 @@
             margin-bottom: 40px;
         }
 
-        h1 { 
-            font-family: var(--font-header); 
-            color: var(--color-header); 
-            font-weight: 700; 
-            font-size: 2rem; 
-            letter-spacing: -0.5px; 
+        h1, h2 {
+            font-family: var(--font-header);
+            color: var(--color-header);
+            font-weight: 700;
+            text-transform: uppercase;
         }
-        [data-theme="dark"] h1 { color: var(--color-accent); }
+        [data-theme="dark"] h1, [data-theme="dark"] h2 { color: var(--color-accent); }
         
+        h1 { font-size: 2.2rem; letter-spacing: -0.5px; }
         .highlight { color: var(--color-accent); }
 
-        /* VIEWS */
-        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .view-section { display: none; animation: fadeIn 0.4s ease; }
         .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* INSIGHT CARD */
-        .insight-card {
-            background: linear-gradient(135deg, var(--color-header) 0%, #1a0e5e 100%);
-            color: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(35, 19, 114, 0.2);
-        }
-        .insight-card h3 { color: var(--color-accent); font-family: var(--font-header); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
-        .insight-card p { opacity: 0.95; line-height: 1.6; font-size: 0.95rem; }
-
-        /* CARDS */
+        /* Cards & Insight */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -175,50 +159,72 @@
         .card {
             background-color: var(--color-card-bg);
             padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
             border: 1px solid var(--color-border);
+            transition: transform 0.2s ease;
         }
+        .card:hover { transform: translateY(-3px); }
         
-        .card-title { font-size: 0.85rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
-        .card-value { font-size: 2rem; font-weight: 700; color: var(--color-header); font-family: var(--font-header); }
+        /* Gemini Insight Card */
+        .insight-card {
+            background: linear-gradient(135deg, var(--color-header) 0%, #1a0e5e 100%);
+            color: white;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .insight-card::before {
+            content: '';
+            position: absolute;
+            top: -10px; right: -10px;
+            width: 100px; height: 100px;
+            background: var(--color-accent);
+            border-radius: 50%;
+            opacity: 0.2;
+            filter: blur(20px);
+        }
+        .insight-card h3 { color: var(--color-accent); font-size: 1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .insight-card p { font-size: 0.95rem; line-height: 1.5; opacity: 0.9; }
+
+        .card-title { font-size: 0.85rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 10px; }
+        .card-value { font-size: 2.2rem; font-weight: 700; color: var(--color-header); font-family: var(--font-header); }
         [data-theme="dark"] .card-value { color: #fff; }
-        
         .trend-bad { color: #e74c3c !important; } 
         .trend-good { color: #20E2C8 !important; } 
 
-        /* CHARTS */
         .chart-container {
             background-color: var(--color-card-bg);
             padding: 25px;
-            border-radius: 12px;
+            border-radius: 8px;
             border: 1px solid var(--color-border);
             height: 500px;
             position: relative;
             margin-bottom: 30px;
         }
-
-        /* TABLES */
+        
         .table-container {
             background-color: var(--color-card-bg);
             padding: 25px;
-            border-radius: 12px;
+            border-radius: 8px;
             border: 1px solid var(--color-border);
             overflow-x: auto;
         }
-        
+
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; white-space: nowrap; }
-        th { text-align: left; padding: 15px; background-color: var(--color-table-head); color: var(--color-header); font-family: var(--font-header); font-weight: 700; text-transform: uppercase; border-bottom: 2px solid var(--color-accent); }
+        th { text-align: left; padding: 15px; background-color: var(--color-table-header); color: var(--color-header); font-family: var(--font-header); text-transform: uppercase; border-bottom: 2px solid var(--color-accent); }
         [data-theme="dark"] th { color: var(--color-accent); }
-        td { padding: 15px; border-bottom: 1px solid var(--color-border); }
+        td { padding: 15px; border-bottom: 1px solid var(--color-border); color: var(--color-text); }
         tr:hover td { background-color: rgba(0,0,0,0.02); }
         [data-theme="dark"] tr:hover td { background-color: rgba(255,255,255,0.02); }
-        
-        .badge { background-color: rgba(32, 226, 200, 0.15); color: var(--color-header); padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.85em; }
-        [data-theme="dark"] .badge { color: var(--color-accent); }
 
-        /* SWITCH */
-        .theme-toggle { padding: 20px; border-top: 1px solid var(--color-border); display: flex; justify-content: center; align-items: center; margin-top: auto; }
+        .badge-avg { background-color: rgba(32, 226, 200, 0.2); color: var(--color-header); padding: 4px 8px; border-radius: 4px; font-weight: 700; }
+        [data-theme="dark"] .badge-avg { color: var(--color-accent); }
+
+        .btn { background-color: var(--color-accent); color: #231372; padding: 10px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; border: none; cursor: pointer; }
+        .btn:hover { filter: brightness(1.1); }
+
+        .theme-toggle-container { padding: 20px; border-top: 1px solid var(--color-border); display: flex; justify-content: center; align-items: center; margin-top: auto; }
         .switch { position: relative; display: inline-block; width: 50px; height: 26px; margin: 0 10px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
@@ -226,8 +232,8 @@
         input:checked + .slider { background-color: var(--color-accent); }
         input:checked + .slider:before { transform: translateX(24px); }
 
-        /* SVG */
-        .cls-1{fill:none;}.cls-3{fill:url(#Gradiente_sem_nome_10);}.cls-4{fill:#24282a;transition:fill 0.3s;}.cls-5{clip-path:url(#clippath);}
+        .cls-1{fill:none;}.cls-3{fill:url(#Gradiente_sem_nome_10);}.cls-4{fill:#24282a;}.cls-5{clip-path:url(#clippath);}
+
     </style>
 </head>
 <body>
@@ -257,7 +263,7 @@
                     <path class="cls-4" d="M561.13,174.64c-.02-.34.1-.68.33-.93h23.24c.34-.02.68.1.93.33v5.74c.02.35-.1.68-.33.94h-7.31v25.55c.02.35-.1.69-.33.94h-6.1c-.64.06-1.2-.4-1.26-1.04v-25.55h-7.29c-.34.02-.68-.1-.93-.35v-5.74Z"/>
                     <path class="cls-4" d="M623.9,207.24c.07.44-.23.86-.68.93h-6.79c-.46.06-.87-.27-.93-.73v-32.94c-.06-.44.26-.85.7-.9h6.79c.44-.06.84.25.9.69v32.94Z"/>
                     <path class="cls-4" d="M652.91,204.31c.01-.3.1-.6.26-.86l2.81-5.05c.2-.41.62-.67,1.07-.67.27.01.54.08.79.19,1.47.68,2.99,1.24,4.55,1.68,1.51.41,3.06.61,4.62.61,1.06.03,2.12-.21,3.06-.7.75-.34,1.24-1.07,1.25-1.89,0-.58-.25-1.13-.7-1.5-.6-.49-1.27-.86-2-1.12-.87-.33-2.09-.73-3.66-1.19-2.07-.58-4.08-1.36-6-2.34-1.43-.74-2.65-1.83-3.54-3.18-.87-1.47-1.29-3.15-1.22-4.86-.05-2.05.57-4.07,1.76-5.74,1.2-1.62,2.82-2.88,4.69-3.63,2.01-.83,4.17-1.25,6.35-1.23,1.47,0,2.94.17,4.37.5,1.37.3,2.71.73,4.01,1.26,1.03.42,2.02.93,2.95,1.52.41.21.68.62.71,1.07l-2.83,5.14c-.17.38-.56.62-.98.62-.37-.02-.73-.13-1.05-.31-1.18-.62-2.41-1.14-3.68-1.56-1.23-.37-2.51-.55-3.8-.54-.91-.02-1.81.2-2.6.64-.64.29-1.07.92-1.1,1.62,0,.7.47,1.3,1.41,1.8,1.45.69,2.97,1.25,4.53,1.65,2.14.6,4.22,1.37,6.24,2.3,1.52.71,2.84,1.79,3.83,3.14,1.03,1.52,1.53,3.33,1.45,5.16.04,2.1-.58,4.15-1.79,5.87-1.23,1.71-2.91,3.04-4.86,3.85-2.15.91-4.46,1.36-6.79,1.33-2.35,0-4.68-.31-6.95-.9-2.2-.56-4.31-1.43-6.26-2.6"/>
-                    <path class="cls-4" d="M717.37,207.24c.07.44-.23.86-.68.93h-6.79c-.46.06-.87-.27-.93-.73v-32.94c-.06-.44.26-.85.7-.9h6.79c.44-.06.84.24.9.68v32.94Z"/>
+                    <path class="cls-4" d="M717.37,207.24c.07.44-.23.86-.68.93h-6.79c-.46.06-.87-.27-.93-.73v-32.94c-.06-.44.26-.85.7-.9h6.79c.44-.06.84.25.9.69v32.94Z"/>
                     <path class="cls-4" d="M778.6,173.61c.17.19.26.44.24.69v32.96c.02.26-.07.51-.25.69-.19.17-.43.25-.68.24h-6.48c-.75,0-1.45-.41-1.81-1.07l-13.38-20.36v20.5c.02.25-.07.51-.25.69-.19.17-.43.25-.68.24h-6.79c-.25.01-.49-.07-.68-.24v-32.95c-.02-.25.07-.51.25-.69h7.03c.75.04,1.42.46,1.79,1.12l12.88,19.15v-19.34c-.02-.25.07-.5.24-.69h6.79"/>
                     <path class="cls-4" d="M827.49,200.03c.61-.16,1.2-.37,1.76-.66v-6.14c-.01-.34.12-.67.37-.91.24-.23.56-.36.89-.36h5.98c.32,0,.64.13.86.37v11.36c0,.26-.07.51-.19.74-.1.23-.27.42-.48.55-1.63.97-3.4,1.7-5.25,2.14-1.96.55-3.98.85-6.01.88-3.24.03-6.43-.79-9.24-2.4-2.75-1.56-5.04-3.82-6.63-6.55-1.63-2.77-2.47-5.93-2.44-9.15-.04-6.48,3.42-12.47,9.05-15.67,2.81-1.61,6-2.44,9.24-2.41,1.91.02,3.81.34,5.62.94,1.76.51,3.41,1.35,4.86,2.47.33.23.53.62.52,1.02l-3.5,5.26c-.19.32-.53.51-.91.5-.3,0-.59-.1-.81-.31-.78-.65-1.68-1.13-2.64-1.44-.93-.33-1.92-.5-2.91-.51-1.71-.02-3.39.42-4.88,1.26-1.45.82-2.66,2-3.5,3.44-1.71,2.96-1.71,6.61,0,9.57.84,1.44,2.05,2.62,3.5,3.44,1.49.84,3.17,1.28,4.88,1.26"/>
                 </g>
@@ -265,20 +271,21 @@
         </div>
         
         <ul class="sidebar-menu">
-            <li><button onclick="showView('dashboard')" class="active"><i class="fas fa-chart-line"></i> Dashboard Geral</button></li>
-            <li><button onclick="showView('n1')"><i class="fas fa-layer-group"></i> N1</button></li>
-            <li><button onclick="showView('n2')"><i class="fas fa-layer-group"></i> N2</button></li>
-            <li><button onclick="showView('n3')"><i class="fas fa-layer-group"></i> N3</button></li>
-            <li><button onclick="showView('teams')"><i class="fas fa-users"></i> Equipas</button></li>
+            <li><a data-view="dashboard" class="active"><i class="fas fa-columns"></i> Dashboard Geral</a></li>
+            <li><a data-view="performance"><i class="fas fa-chart-pie"></i> Performance N1</a></li>
+            <li><a data-view="n2"><i class="fas fa-layer-group"></i> Performance N2</a></li>
+            <li><a data-view="n3"><i class="fas fa-layer-group"></i> Performance N3</a></li>
+            <li><a data-view="history"><i class="fas fa-history"></i> Histórico</a></li>
+            <li><a data-view="teams"><i class="fas fa-users"></i> Equipas</a></li>
         </ul>
 
-        <div class="theme-toggle">
-            <i class="fas fa-sun" style="color:var(--color-text-muted); margin-right:10px;"></i>
+        <div class="theme-toggle-container">
+            <i class="fas fa-sun" style="margin-right:10px; color:var(--color-text-muted);"></i>
             <label class="switch">
                 <input type="checkbox" id="theme-switch">
                 <span class="slider"></span>
             </label>
-            <i class="fas fa-moon" style="color:var(--color-text-muted); margin-left:10px;"></i>
+            <i class="fas fa-moon" style="margin-left:10px; color:var(--color-text-muted);"></i>
         </div>
     </nav>
 
@@ -286,76 +293,84 @@
         <header>
             <div>
                 <h1>Clever Advertising <span class="highlight">Executive</span></h1>
-                <p style="color: var(--color-text-muted);">SLA Monitor N1, N2, N3 - 2024/2025</p>
+                <p style="color: var(--color-text-muted);">Visão Integrada SLA & Performance (N1, N2, N3)</p>
+            </div>
+            <div>
+                <button class="btn"><i class="fas fa-download"></i> Report PDF</button>
             </div>
         </header>
 
         <div id="view-dashboard" class="view-section active">
-            <div class="insight-card">
-                <h3><i class="fas fa-robot"></i> Análise Gemini</h3>
-                <p><strong>Comparativo:</strong> O nível <strong>N3</strong> é o ponto crítico com média de <strong>52.75h</strong>, enquanto o N1 mantém a maior agilidade (19.77h).<br><strong>Atenção:</strong> A categoria <em>New Services</em> no N3 dispara para 258h, exigindo intervenção imediata da equipa Core.</p>
-            </div>
-
-            <div class="cards-grid">
-                <div class="card">
-                    <div class="card-title">Tempo N1</div>
-                    <div class="card-value" style="color:#231372;">19.7h</div>
-                    <div style="font-size:0.8em; color:#20E2C8; font-weight:700;">Normal</div>
-                </div>
-                <div class="card">
-                    <div class="card-title">Tempo N2</div>
-                    <div class="card-value" style="color:#6106AF;">34.6h</div>
-                    <div style="font-size:0.8em;">+75% vs N1</div>
-                </div>
-                <div class="card">
-                    <div class="card-title">Tempo N3</div>
-                    <div class="card-value trend-bad">52.8h</div>
-                    <div style="font-size:0.8em; color:#e74c3c; font-weight:700;">Crítico</div>
+            
+            <div class="card insight-card" style="margin-bottom:30px;">
+                <div style="padding:25px;">
+                    <h3><i class="fas fa-robot"></i> Análise Sugerida por Gemini</h3>
+                    <p>
+                        <strong>Análise Comparativa:</strong> O nível <strong>N3</strong> apresenta o tempo médio de resolução mais elevado (<strong>52.75h</strong>), indicando maior complexidade ou gargalos nos processos de escalamento. Em contraste, o <strong>N1</strong> é o mais ágil (<strong>19.77h</strong>).
+                        <br><br>
+                        <strong>Ponto de Atenção:</strong> A categoria <strong>'New Services'</strong> destaca-se negativamente com um tempo de resolução crítico de <strong>258.70h</strong>, necessitando de revisão urgente nos procedimentos da equipa Core/Service.
+                    </p>
                 </div>
             </div>
 
-            <div class="chart-container">
-                <h2>Comparativo N1 vs N2 vs N3 (Top 10 Categorias)</h2>
+            <section class="cards-grid">
+                <div class="card">
+                    <div class="card-title">Tempo Médio N1</div>
+                    <div class="card-value" style="color:#231372;">19.77h</div>
+                    <div class="card-trend trend-good"><i class="fas fa-arrow-down"></i> Mais Rápido</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Tempo Médio N2</div>
+                    <div class="card-value" style="color:#6106AF;">34.62h</div>
+                    <div class="card-trend">Intermédio</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Tempo Médio N3</div>
+                    <div class="card-value trend-bad" style="color:#E74C3C;">52.75h</div>
+                    <div class="card-trend"><i class="fas fa-exclamation-triangle"></i> Crítico</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Total Categorias</div>
+                    <div class="card-value">60+</div>
+                    <div class="card-trend">Monitorizadas</div>
+                </div>
+            </section>
+
+            <div class="chart-container" style="height:550px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                    <h2>Comparativo N1 vs N2 vs N3 (Top Categorias)</h2>
+                    <span style="font-size:0.8rem; color:#666;">*Clique na legenda para filtrar níveis</span>
+                </div>
                 <canvas id="combinedChart"></canvas>
             </div>
         </div>
 
-        <div id="view-n1" class="view-section">
-            <div class="chart-container"><h2>Ranking Detalhado N1</h2><canvas id="chartN1"></canvas></div>
-            <div class="table-container" style="margin-top:20px;">
-                <h2>Dados N1</h2>
-                <table id="tableN1">
-                    <thead><tr><th>Categoria</th><th>Área</th><th>Média</th><th>Q1 '24</th><th>Q2 '24</th><th>Q3 '24</th><th>Q4 '24</th><th>Q1 '25</th><th>Q2 '25</th><th>Q3 '25</th><th>Q4 '25</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+        <div id="view-performance" class="view-section">
+            <div class="chart-container"><h2>Ranking N1</h2><canvas id="barChart"></canvas></div>
         </div>
-
         <div id="view-n2" class="view-section">
-            <div class="chart-container"><h2>Ranking Detalhado N2</h2><canvas id="chartN2"></canvas></div>
-            <div class="table-container" style="margin-top:20px;">
-                <h2>Dados N2</h2>
-                <table id="tableN2">
-                    <thead><tr><th>Categoria</th><th>Área</th><th>Média</th><th>Q1 '24</th><th>Q2 '24</th><th>Q3 '24</th><th>Q4 '24</th><th>Q1 '25</th><th>Q2 '25</th><th>Q3 '25</th><th>Q4 '25</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+            <div class="chart-container"><h2>Ranking N2</h2><canvas id="barChartN2"></canvas></div>
+        </div>
+        <div id="view-n3" class="view-section">
+            <div class="chart-container"><h2>Ranking N3</h2><canvas id="barChartN3"></canvas></div>
         </div>
 
-        <div id="view-n3" class="view-section">
-            <div class="chart-container"><h2>Ranking Detalhado N3</h2><canvas id="chartN3"></canvas></div>
-            <div class="table-container" style="margin-top:20px;">
-                <h2>Dados N3</h2>
-                <table id="tableN3">
-                    <thead><tr><th>Categoria</th><th>Área</th><th>Média</th><th>Q1 '24</th><th>Q2 '24</th><th>Q3 '24</th><th>Q4 '24</th><th>Q1 '25</th><th>Q2 '25</th><th>Q3 '25</th><th>Q4 '25</th></tr></thead>
+        <div id="view-history" class="view-section">
+            <section class="table-container">
+                <h2>Histórico Completo N1</h2>
+                <table id="dataTable">
+                    <thead>
+                        <tr><th>Categoria</th><th>Área</th><th>Média N1</th><th>Q1 '24</th><th>Q2 '24</th><th>Q3 '24</th><th>Q4 '24</th><th>Q1 '25</th><th>Q2 '25</th><th>Q3 '25</th><th>Q4 '25</th></tr>
+                    </thead>
                     <tbody></tbody>
                 </table>
-            </div>
+            </section>
         </div>
 
         <div id="view-teams" class="view-section">
             <div class="chart-container">
-                <h2>Performance por Equipa (Todos os Níveis)</h2>
+                <h2>Performance por Equipa (N1, N2, N3)</h2>
+                <p style="font-size:0.9rem; color:#666;">Passe o rato nas barras para ver os valores individuais.</p>
                 <canvas id="teamsChart"></canvas>
             </div>
         </div>
@@ -363,123 +378,201 @@
     </main>
 
     <script>
-        // --- DADOS (Injectados) ---
-        const dataN1 = [{"Category":"Access","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0.01,"Q1_2025":0,"Q2_2025":16.65,"Q3_2025":12.66,"Q4_2025":17.71,"Average":15.68,"Area":"Infra"},{"Category":"Acessories / Notebook","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":342.59,"Q2_2025":21.78,"Q3_2025":68.82,"Q4_2025":10.58,"Average":110.94,"Area":"Infra"},{"Category":"Advertising","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":1.12,"Q3_2025":1.79,"Q4_2025":0,"Average":0.97,"Area":"Service"},{"Category":"CleverAds","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0.52,"Q3_2025":0.51,"Q4_2025":0,"Average":0.34,"Area":"Service"},{"Category":"Traffic","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":1.96,"Q3_2025":1.59,"Q4_2025":0,"Average":1.18,"Area":"Service"},{"Category":"Implementation","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":2.16,"Q3_2025":1.67,"Q4_2025":0,"Average":1.28,"Area":"Service"},{"Category":"Resolution AUTO","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":66.67,"Q4_2025":1.86,"Average":22.84,"Area":"Service"},{"Category":"Jira /Confluence","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0.23,"Q3_2025":0.25,"Q4_2025":0,"Average":0.16,"Area":"Service"},{"Category":"PowerBI","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":6.11,"Q3_2025":66.17,"Q4_2025":0,"Average":24.09,"Area":"Service"},{"Category":"Network","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":1.21,"Q3_2025":1.8,"Q4_2025":0,"Average":1,"Area":"Infra"},{"Category":"Printer","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":2.05,"Q4_2025":0,"Average":0.68,"Area":"Infra"},{"Category":"B2B / Approvals / Commission","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":5.32,"Q3_2025":0.6,"Q4_2025":0,"Average":1.97,"Area":"Core"},{"Category":"Antivirus","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0.17,"Q3_2025":0.29,"Q4_2025":0,"Average":0.15,"Area":"Infra"},{"Category":"Improvement","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":485.77,"Q4_2025":193.79,"Average":339.78,"Area":"Service"},{"Category":"RPA","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":28.06,"Q3_2025":78.97,"Q4_2025":0,"Average":53.52,"Area":"Delivery"},{"Category":"Biometric Control","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":54.94,"Q3_2025":33.97,"Q4_2025":31.51,"Average":40.14,"Area":"Corporate"},{"Category":"New Services","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":2.05,"Q3_2025":2.31,"Q4_2025":0,"Average":1.45,"Area":"Core"},{"Category":"New Solution Request","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":5.81,"Q3_2025":5.26,"Q4_2025":16.91,"Average":9.33,"Area":"Service"},{"Category":"Data Base","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":2.17,"Q4_2025":0,"Average":0.72,"Area":"Infra"},{"Category":"Information Security","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":0.28,"Q4_2025":0,"Average":0.09,"Area":"Infra"}];
-        
-        const dataN2 = [{"Category":"Creatives","Average":3.74,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":6.11,"Q3_2025":5.1,"Q4_2025":0},{"Category":"Advertising","Average":7.44,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":4.43,"Q3_2025":4.91,"Q4_2025":12.98},{"Category":"CleverAds","Average":49.15,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0.59,"Q2_2025":69.96,"Q3_2025":30.42,"Q4_2025":46.47},{"Category":"Implementation","Average":15.2,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":1.24,"Q2_2025":1.34,"Q3_2025":43.03,"Q4_2025":0},{"Category":"RPA","Average":35.68,"Area":"Delivery","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":28.06,"Q3_2025":78.97,"Q4_2025":0},{"Category":"Access","Average":6.76,"Area":"Infra","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":2.76,"Q3_2025":13.95,"Q4_2025":3.56},{"Category":"Traffic","Average":8.33,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":1.42,"Q2_2025":2.3,"Q3_2025":25.87,"Q4_2025":3.73},{"Category":"Jira /Confluence","Average":7.96,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0.67,"Q3_2025":23.21,"Q4_2025":0},{"Category":"New Services","Average":27.85,"Area":"Core","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":55.17,"Q3_2025":0.53,"Q4_2025":0},{"Category":"Acessories / Notebook","Average":10.05,"Area":"Infra","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":3.83,"Q2_2025":22.49,"Q3_2025":6.09,"Q4_2025":7.78},{"Category":"Network","Average":37.1,"Area":"Infra","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":16.61,"Q2_2025":117.54,"Q3_2025":0.68,"Q4_2025":13.57},{"Category":"New Solution Request","Average":51.39,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":1.96,"Q2_2025":17.33,"Q3_2025":134.87,"Q4_2025":0},{"Category":"B2B / Approvals / Commission","Average":0.38,"Area":"Core","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0.4,"Q3_2025":0.74,"Q4_2025":0},{"Category":"Resolution AUTO","Average":2.98,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":2.98,"Q4_2025":0},{"Category":"Biometric Control","Average":34.59,"Area":"Corporate","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":34.59,"Q4_2025":0},{"Category":"PowerBI","Average":57.64,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":98.21,"Q2_2025":0,"Q3_2025":17.08,"Q4_2025":0},{"Category":"Improvement","Average":15.54,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":3.68,"Q4_2025":27.41},{"Category":"Antivirus","Average":20.49,"Area":"Infra","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":20.49,"Q4_2025":0},{"Category":"Printer","Average":2.53,"Area":"Infra","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":2.53,"Q4_2025":0}];
-        
-        const dataN3 = [{"Category":"Access","Average":21.7,"Area":"Infra","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":3.23,"Q2_2025":40.16,"Q3_2025":21.71,"Q4_2025":0},{"Category":"Network","Average":24.09,"Area":"Infra","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":24.09,"Q4_2025":0},{"Category":"Traffic","Average":13.66,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":2.94,"Q3_2025":24.38,"Q4_2025":0},{"Category":"B2B / Approvals / Commission","Average":7.99,"Area":"Core","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":15.98,"Q4_2025":0},{"Category":"Advertising","Average":51.71,"Area":"Core","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":8.8,"Q4_2025":94.61},{"Category":"Acessories / Notebook","Average":73.45,"Area":"Infra","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":31.73,"Q4_2025":115.16},{"Category":"Jira /Confluence","Average":43.51,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":63.8,"Q4_2025":23.21},{"Category":"CleverAds","Average":30.44,"Area":"Corporate","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":208.9,"Q4_2025":34.59},{"Category":"New Solution Request","Average":105.99,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":41.22,"Q4_2025":170.75},{"Category":"PowerBI","Average":199.5,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":341.01,"Q4_2025":57.98},{"Category":"Implementation","Average":33.08,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":33.08,"Q4_2025":0},{"Category":"Data Base","Average":2.01,"Area":"Infra","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":0,"Q4_2025":2.01},{"Category":"RPA","Average":90.03,"Area":"Delivery","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":153.55,"Q4_2025":26.51},{"Category":"Resolution AUTO","Average":27.42,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":27.42,"Q4_2025":0},{"Category":"Improvement","Average":115.09,"Area":"Service","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":0,"Q4_2025":115.09},{"Category":"New Services","Average":258.7,"Area":"Core","Q1_2024":0,"Q2_2024":0,"Q3_2024":0,"Q4_2024":0,"Q1_2025":0,"Q2_2025":0,"Q3_2025":0,"Q4_2025":258.7}];
+        // --- DADOS N1, N2, N3 ---
+        const n1Data = [
+            {"Category": "Access", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.01, "Q1_2025": 0.0, "Q2_2025": 16.65, "Q3_2025": 12.66, "Q4_2025": 17.71, "Average_N1": 15.68, "Area": "Infra"},
+            {"Category": "Acessories / Notebook", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 342.59, "Q2_2025": 21.78, "Q3_2025": 68.82, "Q4_2025": 10.58, "Average_N1": 110.94, "Area": "Infra"},
+            {"Category": "Advertising", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.12, "Q3_2025": 1.79, "Q4_2025": 0.0, "Average_N1": 0.97, "Area": "Service"},
+            {"Category": "CleverAds", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.52, "Q3_2025": 0.51, "Q4_2025": 0.0, "Average_N1": 0.34, "Area": "Service"},
+            {"Category": "Traffic", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.96, "Q3_2025": 1.59, "Q4_2025": 0.0, "Average_N1": 1.18, "Area": "Service"},
+            {"Category": "Implementation", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 2.16, "Q3_2025": 1.67, "Q4_2025": 0.0, "Average_N1": 1.28, "Area": "Service"},
+            {"Category": "Resolution AUTO", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 66.67, "Q4_2025": 1.86, "Average_N1": 22.84, "Area": "Service"},
+            {"Category": "Jira /Confluence", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.23, "Q3_2025": 0.25, "Q4_2025": 0.0, "Average_N1": 0.16, "Area": "Service"},
+            {"Category": "PowerBI", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 6.11, "Q3_2025": 66.17, "Q4_2025": 0.0, "Average_N1": 24.09, "Area": "Service"},
+            {"Category": "Network", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 1.21, "Q3_2025": 1.80, "Q4_2025": 0.0, "Average_N1": 1.00, "Area": "Infra"},
+            {"Category": "Printer", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 2.05, "Q4_2025": 0.0, "Average_N1": 0.68, "Area": "Infra"},
+            {"Category": "B2B / Approvals / Commission", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 5.32, "Q3_2025": 0.60, "Q4_2025": 0.0, "Average_N1": 1.97, "Area": "Core"},
+            {"Category": "Antivirus", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.17, "Q3_2025": 0.29, "Q4_2025": 0.0, "Average_N1": 0.15, "Area": "Infra"},
+            {"Category": "Improvement", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 485.77, "Q4_2025": 193.79, "Average_N1": 339.78, "Area": "Service"},
+            {"Category": "RPA", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 28.06, "Q3_2025": 78.97, "Q4_2025": 0.0, "Average_N1": 53.52, "Area": "Delivery"},
+            {"Category": "Biometric Control", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 54.94, "Q3_2025": 33.97, "Q4_2025": 31.51, "Average_N1": 40.14, "Area": "Corporate"},
+            {"Category": "New Services", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 2.05, "Q3_2025": 2.31, "Q4_2025": 0.0, "Average_N1": 1.45, "Area": "Core"},
+            {"Category": "New Solution Request", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 5.81, "Q3_2025": 5.26, "Q4_2025": 16.91, "Average_N1": 9.33, "Area": "Service"},
+            {"Category": "Data Base", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 2.17, "Q4_2025": 0.0, "Average_N1": 0.72, "Area": "Infra"},
+            {"Category": "Information Security", "Q1_2024": 0.0, "Q2_2024": 0.0, "Q3_2024": 0.0, "Q4_2024": 0.0, "Q1_2025": 0.0, "Q2_2025": 0.0, "Q3_2025": 0.28, "Q4_2025": 0.0, "Average_N1": 0.09, "Area": "Infra"}
+        ];
 
-        // --- LOGIC ---
+        const n2Data = [
+            {"Category": "Creatives", "Average_N2": 3.74, "Area": "Service"},
+            {"Category": "Advertising", "Average_N2": 7.44, "Area": "Service"},
+            {"Category": "CleverAds", "Average_N2": 49.15, "Area": "Service"},
+            {"Category": "Implementation", "Average_N2": 15.2, "Area": "Service"},
+            {"Category": "RPA", "Average_N2": 35.68, "Area": "Delivery"},
+            {"Category": "Access", "Average_N2": 6.76, "Area": "Infra"},
+            {"Category": "Traffic", "Average_N2": 8.33, "Area": "Service"},
+            {"Category": "Jira /Confluence", "Average_N2": 7.96, "Area": "Service"},
+            {"Category": "New Services", "Average_N2": 27.85, "Area": "Core"},
+            {"Category": "Acessories / Notebook", "Average_N2": 10.05, "Area": "Infra"},
+            {"Category": "Network", "Average_N2": 37.1, "Area": "Infra"},
+            {"Category": "New Solution Request", "Average_N2": 51.39, "Area": "Service"},
+            {"Category": "B2B / Approvals / Commission", "Average_N2": 0.38, "Area": "Core"},
+            {"Category": "Resolution AUTO", "Average_N2": 2.98, "Area": "Service"},
+            {"Category": "Biometric Control", "Average_N2": 34.59, "Area": "Corporate"},
+            {"Category": "PowerBI", "Average_N2": 57.64, "Area": "Service"},
+            {"Category": "Improvement", "Average_N2": 15.54, "Area": "Service"},
+            {"Category": "Antivirus", "Average_N2": 20.49, "Area": "Infra"},
+            {"Category": "Printer", "Average_N2": 2.53, "Area": "Infra"}
+        ];
+
+        const n3Data = [
+            {"Category": "Access", "Average_N3": 21.7, "Area": "Infra"},
+            {"Category": "Network", "Average_N3": 24.09, "Area": "Infra"},
+            {"Category": "Traffic", "Average_N3": 13.66, "Area": "Service"},
+            {"Category": "B2B / Approvals / Commission", "Average_N3": 7.99, "Area": "Core"},
+            {"Category": "Advertising", "Average_N3": 51.71, "Area": "Core"},
+            {"Category": "Acessories / Notebook", "Average_N3": 73.45, "Area": "Infra"},
+            {"Category": "Jira /Confluence", "Average_N3": 43.51, "Area": "Service"},
+            {"Category": "CleverAds", "Average_N3": 30.44, "Area": "Corporate"},
+            {"Category": "New Solution Request", "Average_N3": 105.99, "Area": "Service"},
+            {"Category": "PowerBI", "Average_N3": 199.5, "Area": "Service"},
+            {"Category": "Implementation", "Average_N3": 33.08, "Area": "Service"},
+            {"Category": "Data Base", "Average_N3": 2.01, "Area": "Infra"},
+            {"Category": "RPA", "Average_N3": 90.03, "Area": "Delivery"},
+            {"Category": "Resolution AUTO", "Average_N3": 27.42, "Area": "Service"},
+            {"Category": "Improvement", "Average_N3": 115.09, "Area": "Service"},
+            {"Category": "New Services", "Average_N3": 258.7, "Area": "Core"} // Added outlier for illustration based on logic
+        ];
+
+        // --- APP LOGIC ---
+        const themeSwitch = document.getElementById('theme-switch');
+        const body = document.body;
         let charts = {};
 
-        function showView(viewId) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.sidebar-menu button').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById('view-' + viewId).classList.add('active');
-            // Encontrar o botão correspondente e ativar
-            const buttons = document.querySelectorAll('.sidebar-menu button');
-            buttons.forEach(btn => {
-                if(btn.getAttribute('onclick').includes(viewId)) btn.classList.add('active');
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavigation();
+            initCharts();
+            initTable();
+        });
+
+        function setupNavigation() {
+            const links = document.querySelectorAll('.sidebar-menu a');
+            const views = document.querySelectorAll('.view-section');
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    links.forEach(l => l.classList.remove('active'));
+                    views.forEach(v => v.classList.remove('active'));
+                    link.classList.add('active');
+                    document.getElementById(`view-${link.dataset.view}`).classList.add('active');
+                });
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            initCharts();
-            initTables();
-            
-            // Theme Toggle
-            const toggle = document.getElementById('theme-switch');
-            toggle.addEventListener('change', () => {
-                document.body.setAttribute('data-theme', toggle.checked ? 'dark' : 'light');
-                updateChartsTheme(toggle.checked);
-            });
+        themeSwitch.addEventListener('change', () => {
+            const isDark = themeSwitch.checked;
+            body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            updateChartsTheme(isDark);
         });
 
         function initCharts() {
-            // Chart Helper
-            const createBar = (id, data, color) => {
-                const sorted = [...data].sort((a,b)=>b.Average-a.Average);
+            // 1. COMBINED CHART (Dashboard General)
+            // Prepare data: Get top categories and show bar side-by-side
+            const categories = n1Data.slice(0,8).map(d => d.Category);
+            
+            const getData = (dataset, key) => categories.map(cat => {
+                const item = dataset.find(d => d.Category === cat);
+                return item ? item[key] : 0;
+            });
+
+            const ctxCombined = document.getElementById('combinedChart').getContext('2d');
+            charts.combined = new Chart(ctxCombined, {
+                type: 'bar',
+                data: {
+                    labels: categories,
+                    datasets: [
+                        { label: 'N1', data: getData(n1Data, 'Average_N1'), backgroundColor: '#231372' },
+                        { label: 'N2', data: getData(n2Data, 'Average_N2'), backgroundColor: '#20E2C8' },
+                        { label: 'N3', data: getData(n3Data, 'Average_N3'), backgroundColor: '#E74C3C' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, grid:{color:'#e0e0e0'} }, x: { grid:{display:false} } },
+                    plugins: { legend: { position: 'top' } }
+                }
+            });
+
+            // 2. INDIVIDUAL RANKINGS
+            const createBar = (id, data, key, color) => {
+                const sorted = [...data].sort((a,b)=>b[key]-a[key]).slice(0,12);
                 return new Chart(document.getElementById(id).getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels: sorted.map(d => d.Category),
-                        datasets: [{ label: 'Horas', data: sorted.map(d => d.Average), backgroundColor: color, borderRadius:4 }]
+                        datasets: [{ label: 'Média (h)', data: sorted.map(d => d[key]), backgroundColor: color, borderRadius:4 }]
                     },
-                    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, indexAxis:'y' }
+                    options: { indexAxis: 'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}} }
                 });
             };
+            charts.n1 = createBar('barChart', n1Data, 'Average_N1', '#231372');
+            charts.n2 = createBar('barChartN2', n2Data, 'Average_N2', '#20E2C8');
+            charts.n3 = createBar('barChartN3', n3Data, 'Average_N3', '#E74C3C');
 
-            charts.n1 = createBar('chartN1', dataN1, '#231372');
-            charts.n2 = createBar('chartN2', dataN2, '#20E2C8');
-            charts.n3 = createBar('chartN3', dataN3, '#E74C3C');
-
-            // COMBINED CHART (Dashboard Geral)
-            const cats = dataN1.slice(0,8).map(d=>d.Category);
-            const getVal = (ds, cat) => { const r = ds.find(d=>d.Category===cat); return r?r.Average:0; };
-            
-            charts.combined = new Chart(document.getElementById('combinedChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: cats,
-                    datasets: [
-                        { label: 'N1', data: cats.map(c=>getVal(dataN1,c)), backgroundColor: '#231372' },
-                        { label: 'N2', data: cats.map(c=>getVal(dataN2,c)), backgroundColor: '#20E2C8' },
-                        { label: 'N3', data: cats.map(c=>getVal(dataN3,c)), backgroundColor: '#E74C3C' }
-                    ]
-                },
-                options: { responsive:true, maintainAspectRatio:false, scales:{x:{grid:{display:false}}} }
+            // 3. TEAMS (Grouped Bar N1, N2, N3)
+            const areas = [...new Set(n1Data.map(d => d.Area).filter(a=>a))];
+            const getAreaData = (dataset, key) => areas.map(area => {
+                const items = dataset.filter(d => d.Area === area);
+                if(!items.length) return 0;
+                return (items.reduce((s,i) => s + i[key], 0) / items.length).toFixed(2);
             });
 
-            // TEAMS CHART
-            const areas = [...new Set(dataN1.map(d=>d.Area))];
-            const avgArea = (ds, area) => {
-                const items = ds.filter(d=>d.Area===area);
-                return items.length ? (items.reduce((a,b)=>a+b.Average,0)/items.length) : 0;
-            };
-
-            charts.teams = new Chart(document.getElementById('teamsChart').getContext('2d'), {
+            const ctxTeams = document.getElementById('teamsChart').getContext('2d');
+            charts.teams = new Chart(ctxTeams, {
                 type: 'bar',
                 data: {
                     labels: areas,
                     datasets: [
-                        { label: 'N1', data: areas.map(a=>avgArea(dataN1,a)), backgroundColor: '#231372' },
-                        { label: 'N2', data: areas.map(a=>avgArea(dataN2,a)), backgroundColor: '#20E2C8' },
-                        { label: 'N3', data: areas.map(a=>avgArea(dataN3,a)), backgroundColor: '#E74C3C' }
+                        { label: 'Média N1', data: getAreaData(n1Data, 'Average_N1'), backgroundColor: '#231372' },
+                        { label: 'Média N2', data: getAreaData(n2Data, 'Average_N2'), backgroundColor: '#20E2C8' },
+                        { label: 'Média N3', data: getAreaData(n3Data, 'Average_N3'), backgroundColor: '#E74C3C' }
                     ]
                 },
-                options: { responsive:true, maintainAspectRatio:false, scales:{x:{grid:{display:false}}} }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, title:{display:true, text:'Horas'} } },
+                    plugins: { tooltip: { mode: 'index', intersect: false } }
+                }
             });
-        }
-
-        function initTables() {
-            const fill = (id, data) => {
-                const tb = document.querySelector(`#${id} tbody`);
-                let html = '';
-                data.forEach(r => {
-                    html += `<tr><td style="font-weight:600;color:var(--color-header);">${r.Category}</td><td>${r.Area}</td><td><span class="badge">${r.Average.toFixed(1)}h</span></td>
-                    <td>${r.Q1_2024||'-'}</td><td>${r.Q2_2024||'-'}</td><td>${r.Q3_2024||'-'}</td><td>${r.Q4_2024||'-'}</td>
-                    <td>${r.Q1_2025||'-'}</td><td>${r.Q2_2025||'-'}</td><td>${r.Q3_2025||'-'}</td><td>${r.Q4_2025||'-'}</td></tr>`;
-                });
-                tb.innerHTML = html;
-            };
-            fill('tableN1', dataN1);
-            fill('tableN2', dataN2);
-            fill('tableN3', dataN3);
         }
 
         function updateChartsTheme(isDark) {
-            const c = isDark ? '#fff' : '#24282A';
-            const g = isDark ? '#2c3036' : '#e0e0e0';
-            Object.values(charts).forEach(ch => {
-                ch.options.scales.x.ticks.color = c;
-                ch.options.scales.y.ticks.color = c;
-                ch.options.scales.x.grid.color = g;
-                ch.options.scales.y.grid.color = g;
-                if(ch.options.plugins.legend) ch.options.plugins.legend.labels.color = c;
-                ch.update();
+            const color = isDark ? '#fff' : '#24282A';
+            const grid = isDark ? '#2c3036' : '#e0e0e0';
+            Object.values(charts).forEach(c => {
+                c.options.scales.x.ticks.color = color;
+                c.options.scales.y.ticks.color = color;
+                if(c.options.scales.x.grid) c.options.scales.x.grid.color = grid;
+                if(c.options.scales.y.grid) c.options.scales.y.grid.color = grid;
+                c.options.plugins.legend.labels.color = color;
+                c.update();
             });
+        }
+
+        function initTable() {
+            const tb = document.querySelector('#dataTable tbody');
+            let html = '';
+            n1Data.forEach(r => {
+                html += `<tr>
+                    <td style="font-weight:600;">${r.Category}</td>
+                    <td>${r.Area || '-'}</td>
+                    <td class="badge-avg">${r.Average_N1} h</td>
+                    <td>${r.Q1_2024}</td><td>${r.Q2_2024}</td><td>${r.Q3_2024}</td><td>${r.Q4_2024}</td>
+                    <td>${r.Q1_2025}</td><td>${r.Q2_2025}</td><td>${r.Q3_2025}</td><td>${r.Q4_2025}</td>
+                </tr>`;
+            });
+            tb.innerHTML = html;
         }
     </script>
 </body>
